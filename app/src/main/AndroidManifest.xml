@@ -1,2 +1,2 @@
-<manifest package="whirlwind.com.app">
-</manifest>
+<manifest package="com.whirlwind.school1.app"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

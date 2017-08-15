@@ -1,4 +1,6 @@
 apply plugin: 'com.android.feature'
+apply plugin: 'kotlin-android'
+// apply plugin: 'com.google.gms.google-services'
 
 android {
     baseFeature = true
@@ -15,19 +17,13 @@ android {
             minifyEnabled false
         }
     }
-    return void
 }
 
-allprojects {
-    repositories {
-        jcenter()
-        maven {
-            url "https://maven.google.com"
-        }
-        flatDir {
-            dirs 'libs'
-        }
+repositories {
+    flatDir {
+        dirs 'libs'
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -38,5 +34,18 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:26.0.0'
+    compile "com.android.support:appcompat-v7:$support_version"
+    compile "com.android.support:support-v13:$support_version"
+    compile "com.android.support:recyclerview-v7:$support_version"
+
+    compile "com.android.support:design:$support_version"
+    compile "com.android.support:customtabs:$support_version"
+    compile "com.android.support:support-vector-drawable:$support_version"
+
+    implementation "com.google.firebase:firebase-messaging:$firebase_version"
+    implementation "com.google.firebase:firebase-database:$firebase_version"
+    implementation "com.google.firebase:firebase-appindexing:$firebase_version"
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

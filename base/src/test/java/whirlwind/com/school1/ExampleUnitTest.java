@@ -1,4 +1,4 @@
-package whirlwind.com.school1;
+package com.whirlwind.com.school1;
 
 import org.junit.Test;
 

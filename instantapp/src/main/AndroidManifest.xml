@@ -1,1 +1,2 @@
-<manifest package="whirlwind.com.instant"></manifest>
+<manifest package="whirlwind.com.school1.instant"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

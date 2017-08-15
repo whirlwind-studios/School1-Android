@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">School1</string>
-    <string name="website_uri" translatable="false">http://whirlwind-studios.org</string>
+    <string name="website_uri" translatable="false">http://com.whirlwind-studios.org</string>
     <string name="patreon_uri" translatable="false">https://www.patreon.com/school1</string>
-    <string name="mail_uri" translatable="false">mailto:whirlwind.devstudios@gmail.com</string>
+    <string name="mail_uri" translatable="false">mailto:com.whirlwind.devstudios@gmail.com</string>
 
     <string name="title_task_list">Tasks</string>
     <string name="title_appointment_list">Appointments</string>
@@ -115,7 +115,7 @@
     <string name="popup_connecting">Connecting&#8230;</string>
     <string name="popup_connected">Connected</string>
 
-    <string name="promotion_basic">"By the way: You can download School1 in the Google Play Store at or use it in the Web!\nMore Info at http://whirlwind-studios.org\n"</string>
+    <string name="promotion_basic">"By the way: You can download School1 in the Google Play Store at or use it in the Web!\nMore Info at http://com.whirlwind-studios.org\n"</string>
     <string name="promotion_advantages">There are several advantages for you, like "</string>
     <string name="promotion_reminder">reminders for tasks and appointments</string>
     <string name="promotion_easy">With it, you can write down your assignments in no time!</string>
