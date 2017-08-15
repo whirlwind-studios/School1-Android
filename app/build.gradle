@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+
+    defaultConfig {
+        applicationId "com.whirlwind.school1"
+        minSdkVersion 17
+        targetSdkVersion 26
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".d"
+        }
+    }
+}
+
+dependencies {
+    implementation project(":base")
+    implementation "com.google.firebase:firebase-messaging:11.0.4"
+}
