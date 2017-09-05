@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.whirlwind.school1.R;
-import com.whirlwind.school1.model.Item;
+import com.whirlwind.school1.models.Item;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;

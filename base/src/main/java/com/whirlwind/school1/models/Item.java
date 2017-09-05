@@ -1,4 +1,4 @@
-package com.whirlwind.school1.model;
+package com.whirlwind.school1.models;
 
 import android.view.View;
 import android.widget.TextView;
