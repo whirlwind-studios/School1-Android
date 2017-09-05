@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="72dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp">
+
+    <TextView
+        android:id="@+id/row_layout_dashboard_subject"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/circle_subject_appointment"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:text="Git"/>
+
+    <TextView
+        android:id="@+id/row_layout_dashboard_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="72dp"
+        android:textSize="16sp"
+        android:textColor="@color/primaryBlack"
+        android:text="Complete School1" />
+
+    <TextView
+        android:id="@+id/row_layout_dashboard_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/row_layout_dashboard_description"
+        android:layout_marginStart="72dp"
+        android:textSize="14sp"
+        android:text="Monday" />
+</RelativeLayout>

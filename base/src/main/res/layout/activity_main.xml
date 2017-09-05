@@ -3,9 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.whirlwind.com.school1.activity.MainActivity">
+    tools:context="com.whirlwind.school1.activity.MainActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_main_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="8dp"
+        android:clipToPadding="false"/>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/activity_main_floating_action_button"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_margin="16dp"

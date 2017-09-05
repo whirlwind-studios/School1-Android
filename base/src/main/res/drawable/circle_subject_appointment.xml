@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/warningRed" />
+        </shape>
+    </item>
+    <item
+        android:bottom="@dimen/circleSubjectPrivateStrokeThickness"
+        android:left="@dimen/circleSubjectPrivateStrokeThickness"
+        android:right="@dimen/circleSubjectPrivateStrokeThickness"
+        android:top="@dimen/circleSubjectPrivateStrokeThickness">
+        <selector>
+            <item android:state_enabled="true">
+                <shape android:shape="oval">
+                    <stroke
+                        android:width="@dimen/circleSubjectPrivateStrokeThickness"
+                        android:color="@color/circle_subject_stroke_private_color" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</layer-list>
