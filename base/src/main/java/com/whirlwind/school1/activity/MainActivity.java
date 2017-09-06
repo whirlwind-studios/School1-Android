@@ -12,7 +12,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -68,8 +67,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                if(currentFragment!=null)
-                    getFragmentManager().beginTransaction().replace(R.id.activity_main_container, currentFragment).commit();
+                updateFragment();
             }
         };
         drawerLayout.addDrawerListener(toggle);
@@ -80,8 +78,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
         TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
         name.setText(configuration.getString("userName", "_Username_"));
+        school.setText("_School_");
         //school.setText(dataInterface.getSchool().name);
-
 
         int drawerItemId;
         if (savedInstanceState != null)
@@ -90,11 +88,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawerItemId = configuration.getInt("drawerItemId", R.id.action_dashboard);
             navigationView.setCheckedItem(drawerItemId);
         }
-        MenuItem item = navigationView.getMenu().findItem(drawerItemId);
-        if (item != null)
-            onNavigationItemSelected(item);
-        else
-            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.action_dashboard));
+
+        int position = getItemIndex(drawerItemId);
+        MenuItem item = navigationView.getMenu()
+                .findItem(fragmentIds[position]);
+        onNavigationItemSelected(item);
+        if (savedInstanceState == null)
+            updateFragment();
     }
 
     @Override
@@ -113,6 +113,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             super.onBackPressed();
     }
 
+    private int getItemIndex(int id) {
+        for (int i = 0; i < fragmentIds.length; i++)
+            if (id == fragmentIds[i])
+                return i;
+        return 0;
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -129,12 +136,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         else if (drawerItemId == R.id.action_share)
             sendShareMessage();
 
-        int position = 0;
-        for (int i = 0; i < fragmentIds.length; i++)
-            if (drawerItemId == fragmentIds[i]) {
-                position = i;
-                break;
-            }
+        int position = getItemIndex(drawerItemId);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(navigationView.getMenu().findItem(fragmentIds[position]).getTitle());
@@ -150,6 +152,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         else
             tabLayout.setVisibility(View.GONE);
         return true;
+    }
+
+    private void updateFragment() {
+        if (currentFragment != null)
+            getFragmentManager().beginTransaction().replace(R.id.activity_main_container, currentFragment).commit();
     }
 
     public void sendShareMessage() {

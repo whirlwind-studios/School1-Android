@@ -6,14 +6,13 @@
     "apkInfo": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 35
+      "versionCode": -1
     },
-    "outputFile": {
-      "path": "/home/leon/Documents/School1/Apps/Android/school1apk/release/school1apk-release.apk"
-    },
+    "path": "app-release.apk",
     "properties": {
       "packageId": "com.whirlwind.school1",
-      "split": ""
+      "split": "",
+      "minSdkVersion": "17"
     }
   }
 ]
