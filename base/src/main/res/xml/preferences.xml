@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/settings_category_general">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notificationsEnabled"
+            android:summary="@string/settings_summary_notifications"
+            android:title="@string/settings_title_notifications" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="hideCompleted"
+            android:summary="@string/settings_summary_hide_completed"
+            android:title="@string/settings_title_hide_completed" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="shareDefault"
+            android:summary="@string/settings_summary_share_default"
+            android:title="@string/settings_title_share_default" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_category_developer">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="verbosePopups"
+            android:summary="@string/settings_summary_verbose"
+            android:title="@string/settings_title_verbose" />
+        <Preference
+            android:key="showNotifications"
+            android:summary="@string/settings_developer_show_notifications_summary"
+            android:title="@string/settings_developer_show_notifications_title" />
+    </PreferenceCategory>
+    <Preference />
+</PreferenceScreen>

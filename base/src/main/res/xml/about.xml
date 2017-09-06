@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/about_category_social">
+        <Preference
+            android:icon="@drawable/ic_shop_black"
+            android:key="market"
+            android:title="@string/about_social_rate" />
+        <Preference
+            android:icon="@drawable/ic_public_black"
+            android:title="@string/about_social_website">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/website_uri" />
+        </Preference>
+        <Preference
+            android:icon="@drawable/ic_email_black"
+            android:title="@string/about_social_email">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/mail_uri" />
+        </Preference>
+        <Preference
+            android:icon="@drawable/ic_patreon"
+            android:title="@string/about_social_patreon">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/patreon_uri" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/about_category_contributors">
+        <Preference
+            android:summary="@string/about_contributor_idea_summary"
+            android:title="@string/about_contributor_idea_title" />
+        <Preference
+            android:summary="@string/about_contributor_developer_summary"
+            android:title="@string/about_contributor_developer_title" />
+        <Preference
+            android:summary="@string/about_contributor_management_summary"
+            android:title="@string/about_contributor_management_title" />
+        <Preference
+            android:summary="@string/about_contributor_design_summary"
+            android:title="@string/about_contributor_design_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/about_category_thanks">
+        <Preference
+            android:summary="@string/about_thanks_principal_summary"
+            android:title="@string/about_thanks_principal_title" />
+        <Preference
+            android:summary="@string/about_thanks_smv_summary"
+            android:title="@string/about_thanks_smv_title" />
+        <Preference
+            android:summary="@string/about_thanks_icons_summary"
+            android:title="@string/about_thanks_icons_title" />
+        <Preference
+            android:summary="@string/about_thanks_support_library_summary"
+            android:title="@string/about_thanks_support_library_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/about_category_version">
+        <Preference
+            android:key="versionName"
+            android:title="@string/about_version_name_title" />
+
+        <Preference
+            android:key="versionCode"
+            android:title="@string/about_version_code_title" />
+    </PreferenceCategory>
+    <Preference />
+</PreferenceScreen>

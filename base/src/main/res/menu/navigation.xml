@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_dashboard"
+            android:icon="@drawable/ic_dashboard_black"
+            android:title="@string/action_dashboard" />
+
+        <item
+            android:id="@+id/action_ideas"
+            android:icon="@drawable/ic_lightbulb_outline_black"
+            android:title="@string/action_ideas" />
+    </group>
+
+    <group
+        android:id="@+id/navigation_menu_group_account"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/action_account"
+            android:icon="@drawable/ic_account_circle_black"
+            android:title="@string/action_account" />
+
+        <item
+            android:id="@+id/action_courses"
+            android:icon="@drawable/ic_supervisor_account_black"
+            android:title="@string/action_courses" />
+
+        <item
+            android:id="@+id/action_timetable"
+            android:icon="@drawable/ic_event_note_white"
+            android:title="@string/action_config_timetable" />
+    </group>
+
+    <group
+        android:id="@+id/navigation_menu_group_misc"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/action_share"
+            android:icon="@drawable/ic_share_black"
+            android:title="@string/action_share" />
+
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_settings_black"
+            android:title="@string/action_settings" />
+
+        <item
+            android:id="@+id/action_about"
+            android:icon="@drawable/ic_info_black"
+            android:title="@string/action_about" />
+    </group>
+</menu>
