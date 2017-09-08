@@ -1,17 +1,12 @@
 package com.whirlwind.school1.fragment;
 
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,13 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.whirlwind.school1.R;
+import com.whirlwind.school1.activity.ConfigEventActivity;
 import com.whirlwind.school1.activity.MainActivity;
 import com.whirlwind.school1.adapter.DashboardAdapter;
 
 public class DashboardFragment extends Fragment implements MainActivity.FloatingActionButtonHandler {
 
     private final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(null);
-    private RecyclerView recyclerView;
     private final SharedPreferences.OnSharedPreferenceChangeListener hideCompletedListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -40,6 +35,7 @@ public class DashboardFragment extends Fragment implements MainActivity.Floating
             }*/
         }
     };
+    private RecyclerView recyclerView;
 
     @Override
     public void handleFloatingActionButton(FloatingActionButton floatingActionButton) {
@@ -47,10 +43,7 @@ public class DashboardFragment extends Fragment implements MainActivity.Floating
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(getActivity(), ConfigEventActivity.class).putExtra("isNew", true));
-                //ConfigEventSheet fragment = new ConfigEventSheet();
-                //fragment.show(((BaseActivity) getActivity()).getSupportFragmentManager(), "Some fragment");
-                //startActivity(new Intent(getActivity(), TestActivity.class));
+                startActivity(new Intent(getActivity(), ConfigEventActivity.class).putExtra("isNew", true));
             }
         });
     }

@@ -1,7 +1,6 @@
 package com.whirlwind.school1.adapter;
 
 import android.support.v7.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,42 +22,46 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     public DashboardAdapter() {
         int today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        long date = Calendar.getInstance().getTimeInMillis() / 1000;
         if (today >= Calendar.MONDAY && today <= Calendar.WEDNESDAY) {
             rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
             rowItems.add(new Section("Tomorrow"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
             rowItems.add(new Section("This week"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", 0));
         } else if (today == Calendar.THURSDAY) {
             rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
             rowItems.add(new Section("Tomorrow"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
             rowItems.add(new Section("Weekend"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", 0));
         } else if (today == Calendar.FRIDAY) {
             rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
             rowItems.add(new Section("Weekend"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_WEEK, 2);
+            rowItems.add(new Item("LOL", "It's quite empty here...", calendar.getTimeInMillis() / 1000));
         } else if (today == Calendar.SATURDAY) {
-            rowItems.add(new Section("Weekend"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+            rowItems.add(new Section("Today"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
+            rowItems.add(new Section("Tomorrow"));
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
         } else if (today == Calendar.SUNDAY) {
             rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
-
+            rowItems.add(new Item("LOL", "It's quite empty here...", date));
         }
 
         rowItems.add(new Section("Next week"));
-        rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
-        rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+        rowItems.add(new Item("LOL", "It's quite empty here...", 0));
+        rowItems.add(new Item("LOL", "It's quite empty here...", 0));
 
         // TODO: Holiday and interval sections (between two holidays, to give a clearer overview over whats happening in the long run)
         rowItems.add(new Section("Until the end of the universe"));
-        rowItems.add(new Item("LOL", "It's quite empty here...", "Today"));
+        rowItems.add(new Item("LOL", "It's quite empty here...", 0));
     }
 
     @Override
@@ -84,16 +87,16 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         rowItems.get(position).populate(holder.itemView);
     }
 
+    public interface RowItem {
+        void populate(View view);
+    }
+
     static final class ViewHolder extends RecyclerView.ViewHolder {
         ViewHolder(View view, int viewType) {
             super(view);
             if (viewType != VIEW_TYPE_HEADER && viewType != VIEW_TYPE_ITEM)
                 throw new InvalidParameterException("viewType must be VIEW_TYPE_HEADER or VIEW_TYPE_ITEM");
         }
-    }
-
-    public interface RowItem {
-        void populate(View view);
     }
 
     private static class Section implements RowItem {

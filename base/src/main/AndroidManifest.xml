@@ -36,6 +36,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.whirlwind.school1.activity.ConfigEventActivity"
+            android:parentActivityName="activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name="com.whirlwind.school1.service.FirebaseNotificationService"
             android:exported="false">

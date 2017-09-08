@@ -1,6 +1,7 @@
 package com.whirlwind.school1.activity;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.fragment.AboutFragment;
@@ -25,7 +30,13 @@ import com.whirlwind.school1.fragment.DashboardFragment;
 import com.whirlwind.school1.fragment.IdeasFragment;
 import com.whirlwind.school1.fragment.SettingsFragment;
 import com.whirlwind.school1.fragment.TimetableFragment;
+import com.whirlwind.school1.helper.BackendHelper;
+import com.whirlwind.school1.helper.DateHelper;
+import com.whirlwind.school1.models.Item;
+import com.whirlwind.school1.popup.TextPopup;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -75,11 +86,26 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
-        TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
-        TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
-        name.setText(configuration.getString("userName", "_Username_"));
-        school.setText("_School_");
-        //school.setText(dataInterface.getSchool().name);
+        final TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
+        final TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
+        BackendHelper.runOnBackend(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                UserInfo info = firebaseAuth.getCurrentUser();
+                if (info != null) {
+                    name.setText(info.getDisplayName());
+                    FirebaseDatabase.getInstance().getReference()
+                            .child("users")
+                            .child(info.getUid())
+                            .child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            school.setText(String.valueOf(dataSnapshot.getValue()));
+                        }
+                    });
+                }
+            }
+        });
 
         int drawerItemId;
         if (savedInstanceState != null)
@@ -105,11 +131,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-            currentFragment=null;
-        }
-        else
+            currentFragment = null;
+        } else
             super.onBackPressed();
     }
 
@@ -123,27 +148,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
-        ((AppBarLayout)findViewById(R.id.activity_main_app_bar_layout)).setExpanded(true);
-        if (drawerItemId == item.getItemId()){
-            currentFragment=null;
+        ((AppBarLayout) findViewById(R.id.activity_main_app_bar_layout)).setExpanded(true);
+        if (drawerItemId == item.getItemId()) {
+            currentFragment = null;
             return true;
         }
 
         drawerItemId = item.getItemId();
-
         if (drawerItemId == R.id.action_dashboard || drawerItemId == R.id.action_ideas)
             configuration.edit().putInt("drawerItemId", drawerItemId).apply();
         else if (drawerItemId == R.id.action_share)
             sendShareMessage();
 
         int position = getItemIndex(drawerItemId);
-
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(navigationView.getMenu().findItem(fragmentIds[position]).getTitle());
         currentFragment = navigationFragments[position];
 
-        if(currentFragment instanceof FloatingActionButtonHandler)
-            ((FloatingActionButtonHandler)currentFragment).handleFloatingActionButton(floatingActionButton);
+        if (currentFragment instanceof FloatingActionButtonHandler)
+            ((FloatingActionButtonHandler) currentFragment).handleFloatingActionButton(floatingActionButton);
         else
             floatingActionButton.setVisibility(View.GONE);
 
@@ -160,48 +183,67 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public void sendShareMessage() {
-        Random random = new Random();
-        /*ArrayList<Event> tasks = dataInterface.getEvents(Codes.task);
-        ArrayList<Event> appointments = dataInterface.getEvents(Codes.appointment);
+        BackendHelper.runOnBackend(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseDatabase.getInstance().getReference().child("items")
+                        .addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                List<Item> tasks = new LinkedList<>(),
+                                        appointments = new LinkedList<>();
 
-        StringBuilder builder = new StringBuilder();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Item item = snapshot.getValue(Item.class);
+                                    new TextPopup("Item", String.valueOf(snapshot.getValue())).show();
+                                    if (item != null && (item.flags & Item.PRIVATE) == 0) {
+                                        int flags = item.flags & Item.TYPE_MASK;
+                                        if (flags == Item.TASK)
+                                            tasks.add(item);
+                                        else if (flags == Item.APPOINTMENT)
+                                            appointments.add(item);
+                                    }
+                                }
 
-        if (!tasks.isEmpty()) {
-            builder.append(getString(R.string.title_task_list)).append(": \n");
-            for (Event task : tasks)
-                if (task.groupId != 0)
-                    builder.append(task.subject).append(": ").append(task.description)
-                            .append(getString(R.string.message_task_share))
-                            .append(Dates.getStringRelative(this, task.date)).append(")\n\n");
-        }
-        if (!appointments.isEmpty()) {
-            builder.append(getString(R.string.title_appointment_list)).append(": \n");
-            for (Event appointment : appointments) {
-                if (appointment.groupId != 0)
-                    builder.append(appointment.subject).append(": ").append(appointment.description)
-                            .append(getString(R.string.message_appointment_share))
-                            .append(Dates.getStringRelative(this, appointment.date)).append(")\n\n");
+                                StringBuilder builder = new StringBuilder();
+
+                                if (!tasks.isEmpty()) {
+                                    builder.append(getString(R.string.title_task_list)).append(": \n");
+                                    for (Item task : tasks)
+                                        builder.append(task.subject).append(": ").append(task.description)
+                                                .append(getString(R.string.message_task_share))
+                                                .append(DateHelper.getStringRelative(MainActivity.this, task.date)).append(")\n\n");
+                                }
+                                if (!appointments.isEmpty()) {
+                                    builder.append(getString(R.string.title_appointment_list)).append(": \n");
+                                    for (Item appointment : appointments)
+                                        builder.append(appointment.subject).append(": ").append(appointment.description)
+                                                .append(getString(R.string.message_appointment_share))
+                                                .append(DateHelper.getStringRelative(MainActivity.this, appointment.date)).append(")\n\n");
+                                }
+                                if (builder.length() > 0)
+                                    builder.delete(builder.length() - 2, builder.length());
+
+                                int r = new Random().nextInt(4);
+                                builder.append("\n\n");
+                                builder.append(getString(R.string.promotion_basic));
+                                if (r > 0)
+                                    builder.append(getString(R.string.promotion_advantages));
+                                builder.append(getResources().getStringArray(R.array.promotions)[r]);
+
+                                startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
+                                        .putExtra(Intent.EXTRA_TEXT, builder.toString()), getString(R.string.action_share)));
+                            }
+                        });
             }
-        }
-        if (builder.length() > 0)
-            builder.delete(builder.length() - 2, builder.length());
-
-        int r = random.nextInt(4);
-        builder.append("\n\n");
-        builder.append(getString(R.string.promotion_basic));
-        if (r > 0)
-            builder.append(getString(R.string.promotion_advantages));
-        builder.append(getResources().getStringArray(R.array.promotions)[r]);
-
-        startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
-                .putExtra(Intent.EXTRA_TEXT, builder.toString()), getString(R.string.action_share)));*/
+        });
     }
 
-    public interface FloatingActionButtonHandler{
+    public interface FloatingActionButtonHandler {
         void handleFloatingActionButton(FloatingActionButton floatingActionButton);
     }
 
-    public interface TabLayoutHandler{
+    public interface TabLayoutHandler {
         void handleTabLayout(TabLayout tabLayout);
     }
 }
