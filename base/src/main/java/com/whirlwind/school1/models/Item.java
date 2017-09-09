@@ -15,7 +15,7 @@ import java.util.Calendar;
 public class Item implements DashboardAdapter.RowItem {
 
     public static final int TASK = 0, APPOINTMENT = 1, TYPE_MASK = 7; // max 8 different types
-    public static final int PRIVATE = 8;
+    public static final int PRIVATE = 8, SHARED = 0;
     public String groupId;
     public String subject, description;
     public long date;
@@ -47,7 +47,7 @@ public class Item implements DashboardAdapter.RowItem {
     }
 
     @Override
-    public void populate(View view) {
+    public void populate(View view, int position) {
         TextView itemSubject = view.findViewById(R.id.row_layout_dashboard_subject),
                 itemDescription = view.findViewById(R.id.row_layout_dashboard_description),
                 itemDate = view.findViewById(R.id.row_layout_dashboard_date);

@@ -3,6 +3,7 @@ package com.whirlwind.school1.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -16,11 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.whirlwind.school1.R;
+import com.whirlwind.school1.adapter.CourseAdapter;
+import com.whirlwind.school1.adapter.FilterAdapter;
+import com.whirlwind.school1.helper.BackendHelper;
+import com.whirlwind.school1.models.Group;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoursesFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     // TODO: Orientation change
-
+    private CourseAdapter adapter;
+    private List<Group> courses = new ArrayList<>();
     private String lastQuery;
 
     @Override
@@ -41,18 +50,18 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_courses, container, false);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        /*adapter = new CourseAdapter2();
+        adapter = new CourseAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        dataInterface.syncGroups(false, new Backend.ResultCallback() {
+        BackendHelper.getAllCourses(new BackendHelper.OnTaskCompletedListener<List<Group>>() {
             @Override
-            protected void onGetResult(Object result) {
-                courses = (ArrayList<Group>) result;
+            public void onTaskCompleted(List<Group> groups) {
+                courses = groups;
                 onQueryTextChange("");
             }
         });
-*/
+
         return recyclerView;
     }
 
@@ -81,13 +90,16 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
     @Override
     public boolean onQueryTextChange(String newText) {
         lastQuery = newText;
-        /*ArrayList<CourseAdapter2.SortableCourse> filtered = new ArrayList<>();
+        ArrayList<CourseAdapter.SortableCourse> filtered = new ArrayList<>();
         for (Group course : courses) {
             int sortIndex = FilterAdapter.filter(newText, course.name, course.description);
-            if (sortIndex != -1)
-                filtered.add(new CourseAdapter2.SortableCourse(course, sortIndex));
+            if (sortIndex != -1) {
+                //if(BackendHelper.hasCourse(course.uid))
+                //sortIndex+= Integer.MAX_VALUE/3;
+                filtered.add(new CourseAdapter.SortableCourse(course, sortIndex));
+            }
         }
-        adapter.setCourses(filtered);*/
+        adapter.setCourses(filtered);
         return true;
     }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="8dp"
+    android:paddingStart="8dp"
+    android:paddingTop="12dp">
+
+    <GridLayout
+        android:id="@+id/popup_timetable_grid_layout_lessons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</ScrollView>

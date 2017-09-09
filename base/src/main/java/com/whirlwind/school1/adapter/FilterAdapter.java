@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FilterAdapter<T extends Object> extends ArrayAdapter<T> {
+public class FilterAdapter<T, E> extends ArrayAdapter<T> {
 
     private final List<T> objects;
+    private final List<E> ownedObjects;
     private final Filter filter = new Filter() {
 
         @Override
@@ -62,16 +63,17 @@ public class FilterAdapter<T extends Object> extends ArrayAdapter<T> {
         }
     };
 
-    public FilterAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<T> objects) {
+    public FilterAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<T> objects, @NonNull List<E> ownedObjects) {
         super(context, resource, objects);
         this.objects = new ArrayList<>(objects);
+        this.ownedObjects = ownedObjects;
     }
 
     public static int filter(String query, String name, String... args) {
         if (query.equals(""))
             return 0;
         else if (query.equals(name))
-            return Integer.MAX_VALUE / 2;
+            return Integer.MAX_VALUE / 3;
         query = query.toLowerCase();
         int index = -1,
                 length = query.length(),

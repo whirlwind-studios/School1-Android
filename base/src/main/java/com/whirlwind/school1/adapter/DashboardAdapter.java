@@ -84,11 +84,11 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        rowItems.get(position).populate(holder.itemView);
+        rowItems.get(position).populate(holder.itemView, position);
     }
 
     public interface RowItem {
-        void populate(View view);
+        void populate(View view, int position);
     }
 
     static final class ViewHolder extends RecyclerView.ViewHolder {
@@ -107,9 +107,14 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         }
 
         @Override
-        public void populate(View view) {
-            TextView sectionHeader = (TextView) view;
+        public void populate(View view, int position) {
+            TextView sectionHeader = view.findViewById(R.id.row_layout_dashboard_header);
             sectionHeader.setText(header);
+            View divider = view.findViewById(R.id.row_layout_dashboard_divider);
+            if (position == 0)
+                divider.setVisibility(View.GONE);
+            else
+                divider.setVisibility(View.VISIBLE);
         }
     }
 }

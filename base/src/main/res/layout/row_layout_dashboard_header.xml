@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="48dp"
-    android:layout_marginStart="16dp"
-    android:gravity="center_vertical"
-    android:background="?attr/selectableItemBackground"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true"
-    android:textColor="@color/colorPrimary"
-    android:fontFamily="sans-serif-medium"
-    android:text="Subheader"/>
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/row_layout_dashboard_header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-medium"
+
+        android:gravity="center_vertical"
+        android:text="Subheader"
+        android:textColor="@color/colorPrimary" />
+
+    <View
+        android:id="@+id/row_layout_dashboard_divider"
+        style="@style/Divider" />
+</RelativeLayout>
+

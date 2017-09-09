@@ -1,5 +1,7 @@
 package com.whirlwind.school1.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,18 +18,27 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
+import com.whirlwind.school1.helper.ConfigurationHelper;
+import com.whirlwind.school1.helper.DateHelper;
+import com.whirlwind.school1.models.Item;
+import com.whirlwind.school1.popup.ConfirmationPopup;
+import com.whirlwind.school1.popup.DatePickerPopup;
+import com.whirlwind.school1.popup.TimetablePopup;
+
+import java.util.Calendar;
 
 public class ConfigEventActivity extends BaseActivity {
 
     private AutoCompleteTextView subject;
     private TextInputEditText description;
     private long date;
-    private byte flags;
+    private int flags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +56,7 @@ public class ConfigEventActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            //flags = args.getByteExtra("flags", dataInterface.getConfiguration().getBoolean("shareDefault", true) ? Codes.public_ : Codes.private_);
-            flags = 0;
+            flags = args.getIntExtra("flags", ConfigurationHelper.getShareDefault(this) ? Item.PRIVATE : Item.SHARED);
             if (args.getBooleanExtra("isNew", true))
                 date = System.currentTimeMillis() / 1000;
             else {
@@ -55,7 +65,7 @@ public class ConfigEventActivity extends BaseActivity {
                 description.setText(args.getStringExtra("description"));
             }
         } else {
-            flags = savedInstanceState.getByte("flags");
+            flags = savedInstanceState.getInt("flags");
             date = savedInstanceState.getLong("date");
         }
 
@@ -77,7 +87,7 @@ public class ConfigEventActivity extends BaseActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //flags &= ~Codes.typeMask;
+                flags &= ~Item.TYPE_MASK;
                 flags |= position;
             }
 
@@ -85,41 +95,41 @@ public class ConfigEventActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        //spinner.setSelection(flags & Codes.typeMask);
+        spinner.setSelection(flags & Item.TYPE_MASK);
 
         /*if (Group.getAdminGroups(dataInterface.getCourses()).isEmpty()) {
-            //checkBox.setVisibility(View.GONE);
-            flags &= ~Codes.public_;
-        } else {
-            checkBox.setChecked((flags & Codes.public_) != 0);
+            checkBox.setVisibility(View.GONE);
+            flags &= ~Item.PRIVATE;
+        } else {*/
+        checkBox.setChecked((flags & Item.PRIVATE) != 0);
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked)
-                        flags |= Codes.public_;
+                        flags |= Item.PRIVATE;
                     else
-                        flags &= ~Codes.public_;
+                        flags &= ~Item.SHARED;
                 }
             });
-        }*/
+        //}
 
-        //datePicker.setText(Dates.getString(date));
+        datePicker.setText(DateHelper.getStringRelative(this, date));
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*new DatePickerPopup(Dates.getCalendar(date), new DatePickerPopup.OnDateSetListener() {
+                new DatePickerPopup(DateHelper.getCalendar(date), new DatePickerPopup.OnDateSetListener() {
                     @Override
                     public void onDateSet(Context context, int year, int month, int dayOfMonth) {
                         if (context instanceof ConfigEventActivity) {
-                            Button datePicker = (Button) ((Activity) context).findViewById(R.id.activity_config_event_button_date_picker);
+                            Button datePicker = ((Activity) context).findViewById(R.id.activity_config_event_button_date_picker);
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(year, month, dayOfMonth);
-                            datePicker.setText(DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTimeInMillis()));
+                            datePicker.setText(DateHelper.getStringRelative(context, calendar));
 
-                            date = Dates.getDate(year, month, dayOfMonth);
+                            date = DateHelper.getDate(year, month, dayOfMonth);
                         }
                     }
-                }).show(ConfigEventActivity.this);*/
+                }).show(ConfigEventActivity.this);
             }
         });
 
@@ -135,7 +145,7 @@ public class ConfigEventActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_timetable) {
-            //new TimetablePopup().show(this);
+            new TimetablePopup().show(this);
         } else if (item.getItemId() == R.id.action_done)
             done();
         else
@@ -146,13 +156,12 @@ public class ConfigEventActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putByte("flags", flags);
+        outState.putInt("flags", flags);
         outState.putLong("date", date);
     }
 
     private void done() {
-        //long relativeDays = Dates.getRelativeDays(date);
-        long relativeDays = 0;
+        long relativeDays = DateHelper.getRelativeDays(date);
         if (relativeDays == 0 || description.length() == 0 || description.length() == 0) {
             StringBuilder builder = new StringBuilder();
             if (subject.length() == 0 || description.length() == 0) {
@@ -168,19 +177,19 @@ public class ConfigEventActivity extends BaseActivity {
 
             String string = builder.toString();
             string = string.substring(0, 1).toUpperCase() + string.substring(1);
-            /*new ConfirmationPopup(getString(R.string.text_confirm_button), string, new Runnable() {
+            new ConfirmationPopup(getString(R.string.text_confirm_button), string, new Runnable() {
                 @Override
                 public void run() {
-                    if (getIntent().getBooleanExtra("isNew", true))
+                    /*if (getIntent().getBooleanExtra("isNew", true))
                         dataInterface.addEvent(ConfigEventActivity.this,
                                 new Event(subject.getText().toString(), description.getText().toString(),
                                         date, flags), null);
                     else
                         dataInterface.editEvent(ConfigEventActivity.this,
                                 new Event(getIntent().getLongExtra("id", 0), 0, (byte) 0, subject.getText().toString(), description.getText().toString(), date, flags),
-                                getIntent().getByteExtra("flags", Codes.public_), null);
+                                getIntent().getIntExtra("flags", Codes.public_), null);*/
                 }
-            }).show(ConfigEventActivity.this);*/
+            }).show(ConfigEventActivity.this);
         } else {
             /*if (getIntent().getBooleanExtra("isNew", true))
                 dataInterface.addEvent(this,
@@ -189,7 +198,7 @@ public class ConfigEventActivity extends BaseActivity {
             else
                 dataInterface.editEvent(this,
                         new Event(getIntent().getLongExtra("id", 0), 0, (byte) 0, subject.getText().toString(), description.getText().toString(), date, flags),
-                        getIntent().getByteExtra("flags", Codes.public_), null);*/
+                        getIntent().getIntExtra("flags", Codes.public_), null);*/
         }
         finish();
     }
