@@ -43,7 +43,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //new CoursePopup(coursesFragment, course).show();
+                // CourseActivity for logging out, viewing course specific lessons, viewing members, adding admins etc
             }
         });
     }

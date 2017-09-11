@@ -16,6 +16,8 @@ public class Item implements DashboardAdapter.RowItem {
 
     public static final int TASK = 0, APPOINTMENT = 1, TYPE_MASK = 7; // max 8 different types
     public static final int PRIVATE = 8, SHARED = 0;
+
+    public String uid;
     public String groupId;
     public String subject, description;
     public long date;

@@ -1,14 +1,13 @@
 package com.whirlwind.school1.helper;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.whirlwind.school1.models.Group;
-import com.whirlwind.school1.models.UserGroup;
 import com.whirlwind.school1.popup.TextPopup;
 
 import java.util.ArrayList;
@@ -16,21 +15,34 @@ import java.util.List;
 
 public class BackendHelper {
 
-    private static List<UserGroup> userCourses;
+    private static List<OnTaskCompletedListener<UserInfo>> listeners = new ArrayList<>();
 
     public static void signIn() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null)
-            FirebaseAuth.getInstance().signInAnonymously();
+        auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                UserInfo userInfo = firebaseAuth.getCurrentUser();
+                Log.d("Authstate", "" + String.valueOf(userInfo));
+                if (userInfo != null) {
+                    for (OnTaskCompletedListener<UserInfo> listener : listeners)
+                        listener.onTaskCompleted(userInfo);
+
+                    listeners.clear();
+                }
+            }
+        });
+        Log.d("Current user", String.valueOf(auth.getCurrentUser()));
+        auth.signInAnonymously();
     }
 
     public static void getUserLoggedInSchool(final OnTaskCompletedListener<Boolean> listener) {
-        runOnBackend(new FirebaseAuth.AuthStateListener() {
+        runOnce(new OnTaskCompletedListener<UserInfo>() {
             @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            public void onTaskCompleted(UserInfo userInfo) {
                 FirebaseDatabase.getInstance().getReference()
                         .child("users")
-                        .child(firebaseAuth.getCurrentUser().getUid())
+                        .child(userInfo.getUid())
                         .child("schoolId")
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -43,31 +55,12 @@ public class BackendHelper {
         });
     }
 
-    public static void getAllCourses(final OnTaskCompletedListener<List<Group>> listener) {
-        runOnBackend(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-                // populate userCourses for hasCourse()
-                // bad coding style, but prefetching by using a helper method is the most reliable method,
-                // and you don't need to synchronize a network operation
-
-                // return all available courses
-                listener.onTaskCompleted(new ArrayList<Group>());
-            }
-        });
-    }
-
-    public static boolean hasCourse(String uid) {
-        return true;
-    }
-
-    public static void runOnBackend(@NonNull final FirebaseAuth.AuthStateListener authStateListener) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null)
-            authStateListener.onAuthStateChanged(auth);
+    public static void runOnce(@NonNull OnTaskCompletedListener<UserInfo> listener) {
+        UserInfo userInfo = FirebaseAuth.getInstance().getCurrentUser();
+        if (userInfo != null)
+            listener.onTaskCompleted(userInfo);
         else
-            auth.addAuthStateListener(authStateListener);
+            listeners.add(listener);
     }
 
     public interface OnTaskCompletedListener<T> {
@@ -78,6 +71,13 @@ public class BackendHelper {
         @Override
         public void onCancelled(DatabaseError databaseError) {
             new TextPopup(databaseError.getMessage(), databaseError.getDetails()).show();
+        }
+    }
+
+    public static abstract class ChildEventListener implements com.google.firebase.database.ChildEventListener {
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
         }
     }
 }

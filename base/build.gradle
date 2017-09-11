@@ -8,13 +8,6 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 35
-        versionName "1.1.1"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
     }
 }
 

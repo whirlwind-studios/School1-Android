@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Was ist mit School1?">
+        <Preference
+            android:summary="Die alte App, die ihr möglicherweise vorher auf dem Handy hattet, funktioniert nicht mehr. Da wir auf Sicherheitsmängel hingewiesen wurden, werden schon seit dem Anfang der Sommerferien keine Daten mehr übertragen, und auch die Website wurde heruntergefahren"
+            android:title="Was ist passiert?" />
+
+        <Preference
+            android:summary="Diese App, die ihr gerade anschaut, ist nur dafür da, um euch auf den aktuellen Stand von School1 zu bringen, damit keine Verwirrung entsteht oder wir am Ende noch potentielle Nutzer vergraulen :)"
+            android:title="Derzeitiger Status" />
+
+        <Preference
+            android:summary="Nur weil etwas gerade nicht funktioniert, heißt es noch lange nicht, dass es nie wieder funktioniert! Wir haben ein paar gravierende Änderungen vorgenommen, die (fast) nur Vorteile für euch Nutzer und uns Entwickler hat, unter anderem, dass wir nun mit viel weniger Arbeit und damit schneller Updates und neue Features entwickeln können (Für Näheres siehe unten)"
+            android:title="Wie sieht es mit der Entwicklung aus?" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Zukunft">
+        <Preference
+            android:summary="Das gesamte Konzept der Synchronisierung wird reibungsloser, einfacher und um einige Aspekte erweitert. Wie ihr auch vielleicht gemerkt habt, haben sich auch die Hauptfarben und die Art der Navigation verändert, und ein neues Logo wird auch folgen (keine Sorge, der kleine Android bleibt nicht für ewig XD). Außerdem planen wir eine verbesserte Website und eine Reihe von neuen Features und Verbesserungen (lasst euch überraschen! :D)"
+            android:title="Was ändert sich?" />
+
+        <Preference
+            android:summary="Angestrebt ist natürlich so früh wie möglich, aber damit ihr auch eine gute App benutzen könnt, ist der Montag der zweiten Schulwoche als Ziel angestrebt. Durch Push Notifications werden wir euch dann alle auf das Update aufmerksam machen"
+            android:title="Und wann?" />
+
+        <Preference
+            android:summary="Selbstverständlich ignorieren wir diese großen und wichtigen Platform nicht! Es wird daher bereits an einer Plattform-übergreifenden App (iOS, Windows 10 Universal und Web) gearbeitet, mit der wirklich jeder School1 benutzen kann!"
+            android:title="Was ist mit iOS? Und Windows Phone?" />
+
+        <Preference
+            android:summary="Ja! Durch unsere Entscheidung, den Quellcode von School1 vollständig zu veröffentlichen, kannst du den Prozess nicht nur verfolgen, sondern auch selber aktiv beeinflussen, wenn du uns bei der Entwicklung helfen willst! Das komplette Projekt ist auf Github verfügbar: Zum Öffnen einfach hier klicken :)"
+            android:title="Kann ich die Entwicklung verfolgen?">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/whirlwind-studios/School1" />
+        </Preference>
+    </PreferenceCategory>
+    <Preference />
+</PreferenceScreen>
