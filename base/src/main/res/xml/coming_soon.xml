@@ -7,7 +7,7 @@
 
         <Preference
             android:summary="Diese App, die ihr gerade anschaut, ist nur dafür da, um euch auf den aktuellen Stand von School1 zu bringen, damit keine Verwirrung entsteht oder wir am Ende noch potentielle Nutzer vergraulen :)"
-            android:title="Derzeitiger Status" />
+            android:title="Was ist der derzeitiger Status?" />
 
         <Preference
             android:summary="Nur weil etwas gerade nicht funktioniert, heißt es noch lange nicht, dass es nie wieder funktioniert! Wir haben ein paar gravierende Änderungen vorgenommen, die (fast) nur Vorteile für euch Nutzer und uns Entwickler hat, unter anderem, dass wir nun mit viel weniger Arbeit und damit schneller Updates und neue Features entwickeln können (Für Näheres siehe unten)"
