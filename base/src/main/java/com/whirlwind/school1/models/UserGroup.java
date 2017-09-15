@@ -4,6 +4,11 @@ public class UserGroup {
 
     public static final int ADMIN = 1;
 
-    public String name;
+    // Metadata
     public int flags;
+
+    // Properties
+    public String name;
+
+    // public String uid; // Do we need that?
 }

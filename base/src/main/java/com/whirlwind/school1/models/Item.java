@@ -17,10 +17,13 @@ public class Item implements DashboardAdapter.RowItem {
     public static final int TASK = 0, APPOINTMENT = 1, TYPE_MASK = 7; // max 8 different types
     public static final int PRIVATE = 0, SHARED = 8;
 
+    // Metadata
     public String groupId;
+    public int flags;
+
+    // Properties
     public String subject, description;
     public long date;
-    public int flags;
 
     public Item(String subject, String description, long date) {
         this.subject = subject;

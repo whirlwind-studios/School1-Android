@@ -56,7 +56,7 @@ public class TimetableConfigAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.timetable_grid_text_view, parent, false);
 
         TextView textView = (TextView) convertView;
-        textView.setText(lesson.name);
+        textView.setText(lesson.title);
         final int day = (position % 5);
         int hourOfDay = (position - day) / 5;
 

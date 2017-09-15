@@ -34,7 +34,7 @@ import com.whirlwind.school1.popup.TimetablePopup;
 
 import java.util.Calendar;
 
-public class ConfigItemActivity extends BaseActivity {
+public class ConfigItemActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener {
 
     private AutoCompleteTextView subject;
     private TextInputEditText description;
@@ -49,7 +49,7 @@ public class ConfigItemActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_config_event);
+        setContentView(R.layout.activity_config_item);
 
         Intent args = getIntent();
 
@@ -106,38 +106,7 @@ public class ConfigItemActivity extends BaseActivity {
         });
         typeSpinner.setSelection(flags & Item.TYPE_MASK);
 
-        courseSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.types)));
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: Add code to save groupId
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        /*if (Group.getAdminGroups(dataInterface.getCourses()).isEmpty()) {
-            shareCheckBox.setVisibility(View.GONE);
-            flags &= ~Item.PRIVATE;
-        } else {*/
-        shareCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    flags |= Item.SHARED;
-                    shareCheckBox.setText(R.string.hint_share_checkbox_on);
-                    courseSpinner.setVisibility(View.VISIBLE);
-                } else {
-                    flags &= ~Item.PRIVATE;
-                    shareCheckBox.setText(R.string.hint_share_checkbox_off);
-                    courseSpinner.setVisibility(View.GONE);
-                }
-            }
-        });
-        shareCheckBox.setChecked((flags & Item.SHARED) != 0);
-        //}
+        //subject.setAdapter(new FilterAdapter<>(this, android.R.layout.simple_list_item_1, Lesson.removeDuplicates(dataInterface.getLessons())));
 
         datePicker.setText(DateHelper.getStringRelative(this, date));
         datePicker.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +128,38 @@ public class ConfigItemActivity extends BaseActivity {
             }
         });
 
-        //subject.setAdapter(new FilterAdapter<>(this, android.R.layout.simple_list_item_1, Lesson.removeDuplicates(dataInterface.getLessons())));
+        /*if (Group.getAdminGroups(dataInterface.getCourses()).isEmpty()) {
+            shareCheckBox.setVisibility(View.GONE);
+            flags &= ~Item.PRIVATE;
+        } else {*/
+        shareCheckBox.setOnCheckedChangeListener(this);
+        shareCheckBox.setChecked((flags & Item.SHARED) != 0);
+        //}
+
+        courseSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.types)));
+        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // TODO: Add code to save groupId
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+        if (isChecked) {
+            flags |= Item.SHARED;
+            shareCheckBox.setText(R.string.hint_share_checkbox_on);
+            courseSpinner.setVisibility(View.VISIBLE);
+        } else {
+            flags &= ~Item.PRIVATE;
+            shareCheckBox.setText(R.string.hint_share_checkbox_off);
+            courseSpinner.setVisibility(View.GONE);
+        }
     }
 
     @Override

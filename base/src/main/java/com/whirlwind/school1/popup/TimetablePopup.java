@@ -57,7 +57,7 @@ public class TimetablePopup extends DialogPopup {
         for (Lesson lesson : lessons) {
             TextView textView = (TextView) LayoutInflater.from(context).inflate(R.layout.popup_timetable_textview, gridLayout, false);
 
-            textView.setText(getShorthand(lesson.name, width));
+            textView.setText(getShorthand(lesson.title, width));
 
             GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams(
                     GridLayout.spec((lesson.time & 248) >> 3), GridLayout.spec(lesson.time & 7));
