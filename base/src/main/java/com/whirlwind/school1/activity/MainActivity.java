@@ -22,7 +22,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
-import com.whirlwind.school1.fragment.ComingSoonFragment;
+import com.whirlwind.school1.fragment.AboutFragment;
+import com.whirlwind.school1.fragment.AccountFragment;
+import com.whirlwind.school1.fragment.CoursesFragment;
+import com.whirlwind.school1.fragment.DashboardFragment;
+import com.whirlwind.school1.fragment.IdeasFragment;
+import com.whirlwind.school1.fragment.SettingsFragment;
+import com.whirlwind.school1.fragment.TimetableFragment;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
@@ -41,16 +47,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     };
 
     private static final Fragment[] navigationFragments = {
-            new ComingSoonFragment(), new ComingSoonFragment(),
-            new ComingSoonFragment(), new ComingSoonFragment(), new ComingSoonFragment(),
-            new ComingSoonFragment(), new ComingSoonFragment()
-    };
-    /*private static final Fragment[] navigationFragments = {
             new DashboardFragment(), new IdeasFragment(),
             new AccountFragment(), new CoursesFragment(), new TimetableFragment(),
             new SettingsFragment(), new AboutFragment()
-    };*/
+    };
 
+    private View headerView;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private FloatingActionButton floatingActionButton;
@@ -83,26 +85,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-        View headerView = navigationView.getHeaderView(0);
-        final TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
-        final TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
-        /*BackendHelper.runOnce(new BackendHelper.OnTaskCompletedListener<UserInfo>() {
+        headerView = navigationView.getHeaderView(0);
+        BackendHelper.runOnce(new BackendHelper.OnTaskCompletedListener<UserInfo>() {
             @Override
             public void onTaskCompleted(UserInfo userInfo) {
                 if (userInfo != null) {
+                    TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
                     name.setText(userInfo.getDisplayName());
+
                     FirebaseDatabase.getInstance().getReference()
                             .child("users")
                             .child(userInfo.getUid())
                             .child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
                             school.setText(String.valueOf(dataSnapshot.getValue()));
                         }
                     });
                 }
             }
-        });*/
+        });
 
         int drawerItemId;
         if (savedInstanceState != null)
@@ -152,10 +155,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
 
         drawerItemId = item.getItemId();
-        /*if (drawerItemId == R.id.action_dashboard || drawerItemId == R.id.action_ideas)
+        if (drawerItemId == R.id.action_dashboard || drawerItemId == R.id.action_ideas)
             configuration.edit().putInt("drawerItemId", drawerItemId).apply();
         else if (drawerItemId == R.id.action_share)
-            sendShareMessage();*/
+            sendShareMessage();
 
         int position = getItemIndex(drawerItemId);
         if (getSupportActionBar() != null)
