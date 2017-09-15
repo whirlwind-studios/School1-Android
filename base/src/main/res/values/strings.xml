@@ -8,7 +8,9 @@
     <string name="title_appointment_list">Appointments</string>
     <string name="title_course_list">Courses</string>
     <string name="title_lesson_list">Timetable</string>
-    <string name="title_account_general">General</string>
+    <string name="title_account_user">User</string>
+    <string name="title_account_school">School</string>
+
 
     <string name="title_config_task_activity">Task</string>
     <string name="title_config_appointment_activity">Appointment</string>

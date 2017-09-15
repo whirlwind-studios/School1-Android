@@ -1,0 +1,18 @@
+[
+  {
+    "outputType": {
+      "type": "APK"
+    },
+    "apkInfo": {
+      "type": "MAIN",
+      "splits": [],
+      "versionCode": 36
+    },
+    "path": "app-qa.apk",
+    "properties": {
+      "packageId": "com.whirlwind.school1.qa",
+      "split": "",
+      "minSdkVersion": "17"
+    }
+  }
+]

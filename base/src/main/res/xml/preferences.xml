@@ -18,11 +18,6 @@
             android:title="@string/settings_title_share_default" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_category_developer">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="verbosePopups"
-            android:summary="@string/settings_summary_verbose"
-            android:title="@string/settings_title_verbose" />
         <Preference
             android:key="showNotifications"
             android:summary="@string/settings_developer_show_notifications_summary"
