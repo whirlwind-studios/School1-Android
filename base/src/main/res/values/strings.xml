@@ -124,7 +124,8 @@
     <string name="promotion_synchronization">automatically syncing tasks and appointments</string>
     <string name="promotion_always">a timetable, which is always available in your pocket</string>
 
-    <string name="hint_public_checkbox">Share</string>
+    <string name="hint_share_checkbox_on">Share in&#8230;</string>
+    <string name="hint_share_checkbox_off">Private</string>
     <string name="content_description_navigation_drawer_open">Open navigation drawer</string>
     <string name="content_description_navigation_drawer_close">Close navigation drawer</string>
     <string name="content_description_navigation_header_icon">School icon</string>

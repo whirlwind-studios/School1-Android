@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/activity_config_event_toolbar"
+            android:id="@+id/activity_config_item_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -23,7 +23,7 @@
             app:elevation="4dp">
 
             <Spinner
-                android:id="@+id/activity_config_event_spinner"
+                android:id="@+id/activity_config_item_spinner_type"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -38,7 +38,7 @@
             android:paddingTop="16dp">
 
             <AutoCompleteTextView
-                android:id="@+id/activity_config_event_autocomplete_text_view_subject"
+                android:id="@+id/activity_config_item_edit_text_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
@@ -57,7 +57,7 @@
             android:paddingRight="8dp">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/activity_config_event_edit_text_description"
+                android:id="@+id/activity_config_item_edit_text_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -67,35 +67,26 @@
                 android:maxLength="1023" />
         </android.support.design.widget.TextInputLayout>
 
-        <!--View style="@style/Divider" /-->
-
         <Button
-            android:id="@+id/activity_config_event_button_date_picker"
+            android:id="@+id/activity_config_item_button_date_picker"
             style="@style/Base.Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:paddingTop="14dp" />
+            android:paddingTop="14dp"
+            android:text="Today, Thursday, 1. January 1970" />
 
         <CheckBox
-            android:id="@+id/activity_config_event_checkbox_share"
+            android:id="@+id/activity_config_item_checkbox_share"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="@string/hint_public_checkbox" />
+            android:text="@string/hint_share_checkbox_on" />
 
-        <!--View
+        <Spinner
+            android:id="@+id/activity_config_item_spinner_course"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:labelFor="@id/activity_config_event_autocomplete_text_view_subject" />
-
-        <Button
-            android:id="@+id/activity_config_event_button_finish"
-            style="@style/ColorButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/text_create_button" /-->
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>
 

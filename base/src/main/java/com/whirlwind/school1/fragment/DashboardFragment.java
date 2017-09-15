@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.whirlwind.school1.R;
-import com.whirlwind.school1.activity.ConfigEventActivity;
+import com.whirlwind.school1.activity.ConfigItemActivity;
 import com.whirlwind.school1.activity.MainActivity;
 import com.whirlwind.school1.adapter.DashboardAdapter;
 
@@ -43,7 +43,7 @@ public class DashboardFragment extends Fragment implements MainActivity.Floating
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), ConfigEventActivity.class).putExtra("isNew", true));
+                startActivity(new Intent(getActivity(), ConfigItemActivity.class).putExtra("isNew", true));
             }
         });
     }

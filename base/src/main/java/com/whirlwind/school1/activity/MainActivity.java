@@ -149,16 +149,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
         ((AppBarLayout) findViewById(R.id.activity_main_app_bar_layout)).setExpanded(true);
-        if (drawerItemId == item.getItemId()) {
+
+        int itemId = item.getItemId();
+
+        // Use previous drawerItemId
+        if (itemId == R.id.action_dashboard || itemId == R.id.action_ideas)
+            configuration.edit().putInt("drawerItemId", drawerItemId).apply();
+        else if (itemId == R.id.action_share) {
+            sendShareMessage();
+            itemId = drawerItemId;
+        }
+        if (drawerItemId == itemId) {
             currentFragment = null;
             return true;
         }
 
-        drawerItemId = item.getItemId();
-        if (drawerItemId == R.id.action_dashboard || drawerItemId == R.id.action_ideas)
-            configuration.edit().putInt("drawerItemId", drawerItemId).apply();
-        else if (drawerItemId == R.id.action_share)
-            sendShareMessage();
+        // Update drawerItemId
+        drawerItemId = itemId;
 
         int position = getItemIndex(drawerItemId);
         if (getSupportActionBar() != null)
@@ -196,7 +203,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     Item item = snapshot.getValue(Item.class);
                                     new TextPopup("Item", String.valueOf(snapshot.getValue())).show();
-                                    if (item != null && (item.flags & Item.PRIVATE) == 0) {
+                                    if (item != null && (item.flags & Item.SHARED) != 0) {
                                         int flags = item.flags & Item.TYPE_MASK;
                                         if (flags == Item.TASK)
                                             tasks.add(item);

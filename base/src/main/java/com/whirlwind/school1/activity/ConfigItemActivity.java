@@ -22,36 +22,44 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.helper.ConfigurationHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
-import com.whirlwind.school1.popup.ConfirmationPopup;
 import com.whirlwind.school1.popup.DatePickerPopup;
 import com.whirlwind.school1.popup.TimetablePopup;
 
 import java.util.Calendar;
 
-public class ConfigEventActivity extends BaseActivity {
+public class ConfigItemActivity extends BaseActivity {
 
     private AutoCompleteTextView subject;
     private TextInputEditText description;
+    private CheckBox shareCheckBox;
+    private Spinner typeSpinner,
+            courseSpinner;
+
     private long date;
     private int flags;
+    private String groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config_event);
 
-        final Intent args = getIntent();
-        Toolbar toolbar = findViewById(R.id.activity_config_event_toolbar);
-        subject = findViewById(R.id.activity_config_event_autocomplete_text_view_subject);
-        description = findViewById(R.id.activity_config_event_edit_text_description);
-        final Button datePicker = findViewById(R.id.activity_config_event_button_date_picker);
-        CheckBox checkBox = findViewById(R.id.activity_config_event_checkbox_share);
-        Spinner spinner = findViewById(R.id.activity_config_event_spinner);
+        Intent args = getIntent();
+
+        Toolbar toolbar = findViewById(R.id.activity_config_item_toolbar);
+        subject = findViewById(R.id.activity_config_item_edit_text_subject);
+        description = findViewById(R.id.activity_config_item_edit_text_description);
+        Button datePicker = findViewById(R.id.activity_config_item_button_date_picker);
+        shareCheckBox = findViewById(R.id.activity_config_item_checkbox_share);
+        typeSpinner = findViewById(R.id.activity_config_item_spinner_type);
+        courseSpinner = findViewById(R.id.activity_config_item_spinner_course);
 
         setSupportActionBar(toolbar);
 
@@ -70,11 +78,12 @@ public class ConfigEventActivity extends BaseActivity {
         }
 
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        spinner.setAdapter(new ArrayAdapter<String>(toolbar.getContext(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.types)) {
+        typeSpinner.setAdapter(new ArrayAdapter<String>(toolbar.getContext(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.types)) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -84,7 +93,7 @@ public class ConfigEventActivity extends BaseActivity {
                 return view;
             }
         });
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 flags &= ~Item.TYPE_MASK;
@@ -95,22 +104,39 @@ public class ConfigEventActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        spinner.setSelection(flags & Item.TYPE_MASK);
+        typeSpinner.setSelection(flags & Item.TYPE_MASK);
+
+        courseSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.types)));
+        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // TODO: Add code to save groupId
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
 
         /*if (Group.getAdminGroups(dataInterface.getCourses()).isEmpty()) {
-            checkBox.setVisibility(View.GONE);
+            shareCheckBox.setVisibility(View.GONE);
             flags &= ~Item.PRIVATE;
         } else {*/
-        checkBox.setChecked((flags & Item.PRIVATE) != 0);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked)
-                        flags |= Item.PRIVATE;
-                    else
-                        flags &= ~Item.SHARED;
+        shareCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    flags |= Item.SHARED;
+                    shareCheckBox.setText(R.string.hint_share_checkbox_on);
+                    courseSpinner.setVisibility(View.VISIBLE);
+                } else {
+                    flags &= ~Item.PRIVATE;
+                    shareCheckBox.setText(R.string.hint_share_checkbox_off);
+                    courseSpinner.setVisibility(View.GONE);
                 }
-            });
+            }
+        });
+        shareCheckBox.setChecked((flags & Item.SHARED) != 0);
         //}
 
         datePicker.setText(DateHelper.getStringRelative(this, date));
@@ -120,8 +146,8 @@ public class ConfigEventActivity extends BaseActivity {
                 new DatePickerPopup(DateHelper.getCalendar(date), new DatePickerPopup.OnDateSetListener() {
                     @Override
                     public void onDateSet(Context context, int year, int month, int dayOfMonth) {
-                        if (context instanceof ConfigEventActivity) {
-                            Button datePicker = ((Activity) context).findViewById(R.id.activity_config_event_button_date_picker);
+                        if (context instanceof ConfigItemActivity) {
+                            Button datePicker = ((Activity) context).findViewById(R.id.activity_config_item_button_date_picker);
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(year, month, dayOfMonth);
                             datePicker.setText(DateHelper.getStringRelative(context, calendar));
@@ -129,7 +155,7 @@ public class ConfigEventActivity extends BaseActivity {
                             date = DateHelper.getDate(year, month, dayOfMonth);
                         }
                     }
-                }).show(ConfigEventActivity.this);
+                }).show(ConfigItemActivity.this);
             }
         });
 
@@ -144,9 +170,12 @@ public class ConfigEventActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_timetable) {
+        // Cannot use switch here due to library resource id's
+        if (item.getItemId() == android.R.id.home)
+            onBackPressed();
+        else if (item.getItemId() == R.id.action_timetable)
             new TimetablePopup().show(this);
-        } else if (item.getItemId() == R.id.action_done)
+        else if (item.getItemId() == R.id.action_done)
             done();
         else
             return super.onOptionsItemSelected(item);
@@ -161,45 +190,14 @@ public class ConfigEventActivity extends BaseActivity {
     }
 
     private void done() {
-        long relativeDays = DateHelper.getRelativeDays(date);
-        if (relativeDays == 0 || description.length() == 0 || description.length() == 0) {
-            StringBuilder builder = new StringBuilder();
-            if (subject.length() == 0 || description.length() == 0) {
-                builder.append(getString(R.string.info_empty_fields));
-                if (relativeDays == 0) {
-                    builder.append(getString(R.string.info_and));
-                    builder.append(getString(R.string.info_date_today));
-                }
-            } else if (relativeDays == 0)
-                builder.append(getString(R.string.info_date_today));
-
-            builder.append(getString(R.string.info_save_anyway));
-
-            String string = builder.toString();
-            string = string.substring(0, 1).toUpperCase() + string.substring(1);
-            new ConfirmationPopup(getString(R.string.text_confirm_button), string, new Runnable() {
-                @Override
-                public void run() {
-                    /*if (getIntent().getBooleanExtra("isNew", true))
-                        dataInterface.addEvent(ConfigEventActivity.this,
-                                new Event(subject.getText().toString(), description.getText().toString(),
-                                        date, flags), null);
-                    else
-                        dataInterface.editEvent(ConfigEventActivity.this,
-                                new Event(getIntent().getLongExtra("id", 0), 0, (byte) 0, subject.getText().toString(), description.getText().toString(), date, flags),
-                                getIntent().getIntExtra("flags", Codes.public_), null);*/
-                }
-            }).show(ConfigEventActivity.this);
-        } else {
-            /*if (getIntent().getBooleanExtra("isNew", true))
-                dataInterface.addEvent(this,
-                        new Event(subject.getText().toString(), description.getText().toString(),
-                                date, flags), null);
-            else
-                dataInterface.editEvent(this,
-                        new Event(getIntent().getLongExtra("id", 0), 0, (byte) 0, subject.getText().toString(), description.getText().toString(), date, flags),
-                        getIntent().getIntExtra("flags", Codes.public_), null);*/
-        }
+        DatabaseReference items = FirebaseDatabase.getInstance().getReference()
+                .child("items");
+        Item item = new Item(groupId, subject.getText().toString(), description.getText().toString(),
+                date, flags);
+        if (getIntent().getBooleanExtra("isNew", true))
+            items.push().setValue(item);
+        else
+            items.child(getIntent().getStringExtra("uid")).setValue(item);
         finish();
     }
 }

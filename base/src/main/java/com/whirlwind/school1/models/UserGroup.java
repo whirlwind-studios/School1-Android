@@ -4,7 +4,6 @@ public class UserGroup {
 
     public static final int ADMIN = 1;
 
-    public String uid,
-            name;
+    public String name;
     public int flags;
 }
