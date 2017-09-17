@@ -35,20 +35,21 @@
         <item name="android:textColor">@color/primaryWhite</item>
     </style>
 
-
-    <!-- TODO: Rename stuff, copy-pasted from firebase sample -->
-    <!-- Dark Buttons -->
-    <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="ThemeOverlay.AppCompat.Dark.Button">
         <item name="colorButtonNormal">@color/colorAccent</item>
         <item name="android:layout_marginRight">4dp</item>
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <!-- Light EditTexts -->
-    <style name="ThemeOverlay.MyLightEditText" parent="ThemeOverlay.AppCompat.Dark" />
+    <style name="ThemeOverlay.AppCompat.Dark.EditText" />
 
-    <style name="ThemeOverlay.MyTextDetail" parent="AppTheme">
+    <style name="AppTheme.TitleText">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="AppTheme.TextDetail">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fadeScrollbars">true</item>
@@ -59,13 +60,8 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="ThemeOverlay.FirebaseIcon" parent="AppTheme">
-        <item name="android:layout_marginTop">@dimen/icon_top_margin</item>
-        <item name="android:layout_marginBottom">@dimen/icon_bottom_margin</item>
-    </style>
-
-    <style name="ThemeOverlay.MyTitleText" parent="AppTheme">
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">36sp</item>
+    <style name="AppTheme.SigninIcon">
+        <item name="android:layout_marginTop">@dimen/signin_icon_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/signin_icon_vertical_margin</item>
     </style>
 </resources>

@@ -16,7 +16,7 @@
 
         <ImageView
             android:id="@+id/google_icon"
-            style="@style/ThemeOverlay.FirebaseIcon"
+            style="@style/AppTheme.SigninIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/content_description_signin_icon"
@@ -26,18 +26,18 @@
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/title_bottom_margin"
+            android:layout_marginBottom="@dimen/signin_title_bottom_margin"
             android:text="@string/title_signin_google"
-            android:theme="@style/ThemeOverlay.MyTitleText" />
+            android:theme="@style/AppTheme.TitleText" />
 
         <TextView
             android:id="@+id/status"
-            style="@style/ThemeOverlay.MyTextDetail"
+            style="@style/AppTheme.TextDetail"
             android:text="@string/info_signed_out" />
 
         <TextView
             android:id="@+id/detail"
-            style="@style/ThemeOverlay.MyTextDetail"
+            style="@style/AppTheme.TextDetail"
             tools:text="Firebase User ID: 123456789abc" />
 
     </LinearLayout>
@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/text_sign_out_button"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.Button" />
 
             <Button
                 android:id="@+id/disconnect_button"
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/text_disconnect_button"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.Button" />
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
