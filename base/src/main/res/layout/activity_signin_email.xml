@@ -19,29 +19,27 @@
             style="@style/ThemeOverlay.FirebaseIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/desc_firebase_lockup"
-            android:src="@drawable/firebase_lockup_400" />
+            android:contentDescription="@string/content_description_signin_icon"
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/title_bottom_margin"
-            android:text="@string/emailpassword_title_text"
+            android:text="@string/title_signin_email"
             android:theme="@style/ThemeOverlay.MyTitleText" />
 
         <TextView
             android:id="@+id/status"
             style="@style/ThemeOverlay.MyTextDetail"
-            android:text="@string/signed_out" />
+            android:text="@string/info_signed_out" />
 
         <TextView
             android:id="@+id/detail"
             style="@style/ThemeOverlay.MyTextDetail"
             tools:text="Firebase User ID: 123456789abc" />
-
     </LinearLayout>
-
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -63,7 +61,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/hint_email"
+                android:hint="@string/hint_email_input"
                 android:inputType="textEmailAddress" />
 
             <EditText
@@ -71,7 +69,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/hint_password"
+                android:hint="@string/hint_password_input"
                 android:inputType="textPassword" />
         </LinearLayout>
 
@@ -89,7 +87,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/sign_in"
+                android:text="@string/text_sign_in_button"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
             <Button
@@ -97,7 +95,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/create_account"
+                android:text="@string/text_create_account_button"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
         </LinearLayout>
 
@@ -117,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="@string/sign_out"
+                android:text="@string/text_sign_out_button"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
             <Button
@@ -125,11 +123,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="@string/verify_email"
+                android:text="@string/text_verify_email_button"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
-
         </LinearLayout>
-
     </RelativeLayout>
-
 </LinearLayout>

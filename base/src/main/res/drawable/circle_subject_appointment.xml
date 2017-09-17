@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/warningRed" />
+            <solid android:color="@color/red_500" />
         </shape>
     </item>
     <item
@@ -15,7 +15,7 @@
                 <shape android:shape="oval">
                     <stroke
                         android:width="@dimen/circle_subject_private_stroke_thickness"
-                        android:color="@color/circle_subject_stroke_private_color" />
+                        android:color="@android:color/white" />
                 </shape>
             </item>
         </selector>

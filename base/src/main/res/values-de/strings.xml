@@ -123,7 +123,7 @@
     <string name="popup_login_course_queued">Überprüfe angegebene Daten&#8230;</string>
     <string name="popup_sync_courses_completed">Es wurden erfolgreich alle Kursdaten synchronisiert</string>
     <string name="error_login_failed">Name oder Passwort ist inkorrekt. Bitte überprüfe die angegebenen Daten und versuche es erneut</string>
-    <string name="hint_user_name_input">Benutzername</string>
+    <string name="hint_email_input">Email</string>
     <string name="popup_sync_courses_queued">Erhalte Kursdaten&#8230;</string>
     <string name="popup_sync_events_completed">Hausaufgaben und Termine wurden synchronisiert</string>
     <string name="popup_sync_events_queued">Synchronisiere Hausaufgaben und Termine</string>

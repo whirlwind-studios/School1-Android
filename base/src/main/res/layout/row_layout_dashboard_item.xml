@@ -5,8 +5,8 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:paddingEnd="16dp"
-    android:paddingStart="16dp">
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin">
 
     <TextView
         android:id="@+id/row_layout_dashboard_subject"

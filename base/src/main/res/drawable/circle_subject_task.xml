@@ -6,13 +6,13 @@
                 <shape
                     android:shape="oval"
                     android:thickness="10dp">
-                    <solid android:color="@color/importantOrange" />
+                    <solid android:color="@color/orange_500" />
                 </shape>
             </item>
 
             <item>
                 <shape android:shape="oval">
-                    <solid android:color="@color/greatGreen" />
+                    <solid android:color="@color/green_500" />
                 </shape>
             </item>
         </selector>
@@ -27,7 +27,7 @@
                 <shape android:shape="oval">
                     <stroke
                         android:width="@dimen/circle_subject_private_stroke_thickness"
-                        android:color="@color/circle_subject_stroke_private_color" />
+                        android:color="@android:color/white" />
                 </shape>
             </item>
         </selector>

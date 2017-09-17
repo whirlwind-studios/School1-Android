@@ -16,7 +16,6 @@
     <string name="title_signin_google">Google</string>
     <string name="title_signin_facebook">Facebook</string>
 
-
     <string name="title_config_task_activity">Task</string>
     <string name="title_config_appointment_activity">Appointment</string>
     <string name="title_enter_course">Enter course</string>
@@ -50,6 +49,11 @@
     <string name="text_enter_admin_button">Enter as admin</string>
     <string name="text_course_enter_button">Enter</string>
     <string name="text_has_account_button">I already have an account</string>
+    <string name="text_sign_in_button">Sign in</string>
+    <string name="text_sign_out_button">Sign out</string>
+    <string name="text_create_account_button">Create account</string>
+    <string name="text_verify_email_button">Verify email</string>
+    <string name="text_disconnect_button">Disconnect</string>
 
     <string name="settings_category_general">General</string>
     <string name="settings_title_notifications">Notifications</string>
@@ -66,7 +70,7 @@
 
     <string name="hint_subject_input">Subject</string>
     <string name="hint_description_input">Description</string>
-    <string name="hint_user_name_input">Username</string>
+    <string name="hint_email_input">Email</string>
     <string name="hint_school_name_input">Name of your school</string>
     <string name="hint_course_name_input">Name of the course/class</string>
     <string name="hint_password_input">Password</string>
@@ -134,6 +138,7 @@
     <string name="content_description_navigation_drawer_open">Open navigation drawer</string>
     <string name="content_description_navigation_drawer_close">Close navigation drawer</string>
     <string name="content_description_navigation_header_icon">School icon</string>
+    <string name="content_description_signin_icon">School1 Icon</string>
 
     <string name="error_title">Error</string>
     <string name="warning_title">Warning</string>
@@ -162,6 +167,7 @@
     <string name="info_save_anyway">". Save anyway?"</string>
     <string name="info_and">" and "</string>
     <string name="info_coming_soon" translatable="false">Coming soon!</string>
+    <string name="info_signed_out">Signed out</string>
 
     <string name="about_category_contributors">Contributors</string>
     <string name="about_contributor_idea_title">Idea and developer</string>
