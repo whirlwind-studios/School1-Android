@@ -36,6 +36,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.SigninChooserActivity" />
+        <activity android:name=".activity.EmailPasswordActivity" />
+        <activity android:name=".activity.GoogleSignInActivity" />
+
         <activity
             android:name="com.whirlwind.school1.activity.ConfigItemActivity"
             android:parentActivityName="activity.MainActivity"

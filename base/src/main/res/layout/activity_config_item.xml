@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -74,7 +75,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:paddingTop="14dp"
-            android:text="Today, Thursday, 1. January 1970" />
+            tools:text="Today, Thursday, 1. January 1970" />
 
         <CheckBox
             android:id="@+id/activity_config_item_checkbox_share"
@@ -82,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:checked="true"
-            android:text="@string/hint_share_checkbox_on" />
+            tools:text="@string/hint_share_checkbox_on" />
 
         <Spinner
             android:id="@+id/activity_config_item_spinner_course"

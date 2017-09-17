@@ -29,16 +29,21 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support_version"
     compile "com.android.support:support-v13:$support_version"
     compile "com.android.support:recyclerview-v7:$support_version"
+    compile "com.android.support:customtabs:$support_version"
 
     compile "com.android.support:design:$support_version"
     compile "com.android.support:customtabs:$support_version"
     compile "com.android.support:support-vector-drawable:$support_version"
 
-    implementation "com.google.firebase:firebase-messaging:$firebase_version"
-    implementation "com.google.firebase:firebase-database:$firebase_version"
-    implementation "com.google.firebase:firebase-appindexing:$firebase_version"
-    implementation "com.google.firebase:firebase-core:$firebase_version"
-    implementation "com.google.firebase:firebase-auth:$firebase_version"
+    implementation "com.google.firebase:firebase-messaging:$google_version"
+    implementation "com.google.firebase:firebase-database:$google_version"
+    implementation "com.google.firebase:firebase-appindexing:$google_version"
+    implementation "com.google.firebase:firebase-core:$google_version"
+    implementation "com.google.firebase:firebase-auth:$google_version"
+
+    // Auth providers
+    compile "com.google.android.gms:play-services-auth:$google_version"
+    compile "com.facebook.android:facebook-android-sdk:$facebook_version"
 
     //compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

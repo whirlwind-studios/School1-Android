@@ -29,6 +29,6 @@ android {
 
 dependencies {
     implementation project(":base")
-    implementation "com.google.firebase:firebase-messaging:$firebase_version"
+    implementation "com.google.firebase:firebase-messaging:$google_version"
 }
 apply plugin: 'com.google.gms.google-services'

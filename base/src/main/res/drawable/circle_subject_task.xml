@@ -18,15 +18,15 @@
         </selector>
     </item>
     <item
-        android:bottom="@dimen/circleSubjectPrivateStrokeThickness"
-        android:left="@dimen/circleSubjectPrivateStrokeThickness"
-        android:right="@dimen/circleSubjectPrivateStrokeThickness"
-        android:top="@dimen/circleSubjectPrivateStrokeThickness">
+        android:bottom="@dimen/circle_subject_private_stroke_thickness"
+        android:left="@dimen/circle_subject_private_stroke_thickness"
+        android:right="@dimen/circle_subject_private_stroke_thickness"
+        android:top="@dimen/circle_subject_private_stroke_thickness">
         <selector>
             <item android:state_enabled="true">
                 <shape android:shape="oval">
                     <stroke
-                        android:width="@dimen/circleSubjectPrivateStrokeThickness"
+                        android:width="@dimen/circle_subject_private_stroke_thickness"
                         android:color="@color/circle_subject_stroke_private_color" />
                 </shape>
             </item>

@@ -54,7 +54,7 @@
             android:layout_height="56dp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/floatingActionButtonMargin"
+            android:layout_margin="@dimen/floating_action_button_margin"
             android:src="@drawable/ic_add_white"
             app:elevation="10dp" />
     </android.support.design.widget.CoordinatorLayout>

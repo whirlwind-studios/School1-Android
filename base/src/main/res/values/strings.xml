@@ -11,6 +11,11 @@
     <string name="title_account_user">User</string>
     <string name="title_account_school">School</string>
 
+    <string name="title_signin_chooser">Chooser</string>
+    <string name="title_signin_email">Email</string>
+    <string name="title_signin_google">Google</string>
+    <string name="title_signin_facebook">Facebook</string>
+
 
     <string name="title_config_task_activity">Task</string>
     <string name="title_config_appointment_activity">Appointment</string>
