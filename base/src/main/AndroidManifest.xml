@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.whirlwind.school1.activity.MainActivity"
+        <activity
+            android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Drawer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,22 +36,23 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-
         <activity android:name=".activity.SigninChooserActivity" />
         <activity android:name=".activity.EmailPasswordActivity" />
         <activity android:name=".activity.GoogleSignInActivity" />
         <activity android:name=".activity.FacebookLoginActivity" />
-
         <activity
-            android:name="com.whirlwind.school1.activity.ConfigItemActivity"
+            android:name=".activity.ConfigItemActivity"
             android:parentActivityName="activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.SigninActivity"
+            android:theme="@style/AppTheme.NoActionBar.Signin" />
 
         <service
-            android:name="com.whirlwind.school1.service.FirebaseNotificationService"
+            android:name=".service.FirebaseNotificationService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>
