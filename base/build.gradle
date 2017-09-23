@@ -9,6 +9,17 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
     }
+    buildTypes{
+        release{
+            buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"504584931701-457rlngk903psig92569ug19tcskaosj.apps.googleusercontent.com\""
+        }
+        debug{
+            buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"677827773104-lbrraai991jca6j7sm266d54fj68kpch.apps.googleusercontent.com\""
+        }
+        qa{
+            buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"506807684032-g6csijg3oui1gv59a6mork8u5eiv6n9h.apps.googleusercontent.com\""
+        }
+    }
 }
 
 repositories {
@@ -29,6 +40,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support_version"
     compile "com.android.support:support-v13:$support_version"
     compile "com.android.support:recyclerview-v7:$support_version"
+    compile "com.android.support:cardview-v7:$support_version"
     compile "com.android.support:customtabs:$support_version"
 
     compile "com.android.support:design:$support_version"

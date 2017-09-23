@@ -172,7 +172,7 @@
     <string name="title_account_general">Allgemein</string>
     <string name="account_category_recover">Wiederherstellung</string>
     <string name="account_school_title">Deine Schule</string>
-    <string name="account_recover_password">Passwort wiederherstellen</string>
+    <string name="account_reset_password">Passwort zurücksetzen</string>
     <string name="settings_developer_show_notifications_summary">Wenn du einfach nur eine Erinerung in der Statusbar haben willst, oder testen willst, ob auch alles richtig funktioniert, einfach diesen Button drücken</string>
     <string name="settings_developer_show_notifications_title">Benachrichtigungen zeigen</string>
     <string name="error_passwords_do_not_match">Passwörter stimmen nicht überein</string>

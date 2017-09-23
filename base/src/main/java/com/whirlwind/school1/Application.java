@@ -4,7 +4,6 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
-import com.whirlwind.school1.helper.BackendHelper;
 
 public class Application extends android.app.Application {
 
@@ -14,6 +13,5 @@ public class Application extends android.app.Application {
         LocalBroadcastManager.getInstance(this);
         FirebaseApp.initializeApp(this);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        BackendHelper.signIn();
     }
 }

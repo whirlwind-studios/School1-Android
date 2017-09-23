@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.UserInfo;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.CourseAdapter;
 import com.whirlwind.school1.adapter.FilterAdapter;
-import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.models.UserGroup;
 
@@ -62,70 +61,68 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        BackendHelper.runOnce(new BackendHelper.OnTaskCompletedListener<UserInfo>() {
-            @Override
-            public void onTaskCompleted(UserInfo userInfo) {
-                FirebaseDatabase.getInstance().getReference()
-                        .child("courses")
-                        .addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
-                                onQueryTextChange(lastQuery);
-                            }
+        FirebaseDatabase.getInstance().getReference()
+                .child("courses")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
+                        onQueryTextChange(lastQuery);
+                    }
 
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
-                                onQueryTextChange(lastQuery);
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
+                        onQueryTextChange(lastQuery);
 
-                            }
+                    }
 
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                courses.remove(dataSnapshot.getKey());
-                                onQueryTextChange(lastQuery);
-                            }
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        courses.remove(dataSnapshot.getKey());
+                        onQueryTextChange(lastQuery);
+                    }
 
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                            }
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
 
-                FirebaseDatabase.getInstance().getReference()
-                        .child("users")
-                        .child(userInfo.getUid())
-                        .child("userGroups")
-                        .addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                                userGroups.put(dataSnapshot.getKey(), (UserGroup) dataSnapshot.getValue());
-                            }
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null)
+            FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(auth.getCurrentUser().getUid())
+                    .child("userGroups")
+                    .addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            userGroups.put(dataSnapshot.getKey(), (UserGroup) dataSnapshot.getValue());
+                        }
 
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                                userGroups.put(dataSnapshot.getKey(), (UserGroup) dataSnapshot.getValue());
-                            }
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            userGroups.put(dataSnapshot.getKey(), (UserGroup) dataSnapshot.getValue());
+                        }
 
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                                userGroups.remove(dataSnapshot.getKey());
-                            }
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            userGroups.remove(dataSnapshot.getKey());
+                        }
 
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                            }
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-            }
-        });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+
         return recyclerView;
     }
 

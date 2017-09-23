@@ -11,11 +11,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class BaseActivity extends AppCompatActivity {
 
-    protected SharedPreferences configuration;
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -23,6 +23,9 @@ public class BaseActivity extends AppCompatActivity {
                 Popup.showIdles(BaseActivity.this);
         }
     };
+    protected FirebaseAuth auth = FirebaseAuth.getInstance();
+    protected FirebaseDatabase database = FirebaseDatabase.getInstance();
+    protected SharedPreferences configuration;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

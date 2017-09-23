@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
@@ -64,6 +63,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //if (auth.getCurrentUser() == null)
         startActivity(new Intent(this, SigninActivity.class));
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.activity_main_toolbar);
@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                updateFragment();
+                //updateFragment();
             }
         };
         drawerLayout.addDrawerListener(toggle);
@@ -87,26 +87,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         navigationView.setNavigationItemSelectedListener(this);
         headerView = navigationView.getHeaderView(0);
-        BackendHelper.runOnce(new BackendHelper.OnTaskCompletedListener<UserInfo>() {
-            @Override
-            public void onTaskCompleted(UserInfo userInfo) {
-                if (userInfo != null) {
-                    TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
-                    name.setText(userInfo.getDisplayName());
+        if (auth.getCurrentUser() != null) {
+            TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
+            name.setText(auth.getCurrentUser().getDisplayName());
 
-                    FirebaseDatabase.getInstance().getReference()
-                            .child("users")
-                            .child(userInfo.getUid())
-                            .child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
-                            school.setText(String.valueOf(dataSnapshot.getValue()));
-                        }
-                    });
+            FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(auth.getCurrentUser().getUid())
+                    .child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
+                    school.setText(String.valueOf(dataSnapshot.getValue()));
                 }
-            }
-        });
+            });
+        }
 
         int drawerItemId;
         if (savedInstanceState != null)
@@ -191,60 +186,56 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public void sendShareMessage() {
-        BackendHelper.runOnce(new BackendHelper.OnTaskCompletedListener<UserInfo>() {
-            @Override
-            public void onTaskCompleted(UserInfo userInfo) {
-                FirebaseDatabase.getInstance().getReference().child("items")
-                        .addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                List<Item> tasks = new LinkedList<>(),
-                                        appointments = new LinkedList<>();
+        FirebaseDatabase.getInstance().getReference().child("items")
+                .addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<Item> tasks = new LinkedList<>(),
+                                appointments = new LinkedList<>();
 
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    Item item = snapshot.getValue(Item.class);
-                                    new TextPopup("Item", String.valueOf(snapshot.getValue())).show();
-                                    if (item != null && (item.flags & Item.SHARED) != 0) {
-                                        int flags = item.flags & Item.TYPE_MASK;
-                                        if (flags == Item.TASK)
-                                            tasks.add(item);
-                                        else if (flags == Item.APPOINTMENT)
-                                            appointments.add(item);
-                                    }
-                                }
-
-                                StringBuilder builder = new StringBuilder();
-
-                                if (!tasks.isEmpty()) {
-                                    builder.append(getString(R.string.title_task_list)).append(": \n");
-                                    for (Item task : tasks)
-                                        builder.append(task.subject).append(": ").append(task.description)
-                                                .append(getString(R.string.message_task_share))
-                                                .append(DateHelper.getStringRelative(MainActivity.this, task.date)).append(")\n\n");
-                                }
-                                if (!appointments.isEmpty()) {
-                                    builder.append(getString(R.string.title_appointment_list)).append(": \n");
-                                    for (Item appointment : appointments)
-                                        builder.append(appointment.subject).append(": ").append(appointment.description)
-                                                .append(getString(R.string.message_appointment_share))
-                                                .append(DateHelper.getStringRelative(MainActivity.this, appointment.date)).append(")\n\n");
-                                }
-                                if (builder.length() > 0)
-                                    builder.delete(builder.length() - 2, builder.length());
-
-                                int r = new Random().nextInt(4);
-                                builder.append("\n\n");
-                                builder.append(getString(R.string.promotion_basic));
-                                if (r > 0)
-                                    builder.append(getString(R.string.promotion_advantages));
-                                builder.append(getResources().getStringArray(R.array.promotions)[r]);
-
-                                startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
-                                        .putExtra(Intent.EXTRA_TEXT, builder.toString()), getString(R.string.action_share)));
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Item item = snapshot.getValue(Item.class);
+                            new TextPopup("Item", String.valueOf(snapshot.getValue())).show();
+                            if (item != null && (item.flags & Item.SHARED) != 0) {
+                                int flags = item.flags & Item.TYPE_MASK;
+                                if (flags == Item.TASK)
+                                    tasks.add(item);
+                                else if (flags == Item.APPOINTMENT)
+                                    appointments.add(item);
                             }
-                        });
-            }
-        });
+                        }
+
+                        StringBuilder builder = new StringBuilder();
+
+                        if (!tasks.isEmpty()) {
+                            builder.append(getString(R.string.title_task_list)).append(": \n");
+                            for (Item task : tasks)
+                                builder.append(task.subject).append(": ").append(task.description)
+                                        .append(getString(R.string.message_task_share))
+                                        .append(DateHelper.getStringRelative(MainActivity.this, task.date)).append(")\n\n");
+                        }
+                        if (!appointments.isEmpty()) {
+                            builder.append(getString(R.string.title_appointment_list)).append(": \n");
+                            for (Item appointment : appointments)
+                                builder.append(appointment.subject).append(": ").append(appointment.description)
+                                        .append(getString(R.string.message_appointment_share))
+                                        .append(DateHelper.getStringRelative(MainActivity.this, appointment.date)).append(")\n\n");
+                        }
+                        if (builder.length() > 0)
+                            builder.delete(builder.length() - 2, builder.length());
+
+                        int r = new Random().nextInt(4);
+                        builder.append("\n\n");
+                        builder.append(getString(R.string.promotion_basic));
+                        if (r > 0)
+                            builder.append(getString(R.string.promotion_advantages));
+                        builder.append(getResources().getStringArray(R.array.promotions)[r]);
+
+                        startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
+                                .putExtra(Intent.EXTRA_TEXT, builder.toString()), getString(R.string.action_share)));
+                    }
+                });
+
     }
 
     public interface FloatingActionButtonHandler {

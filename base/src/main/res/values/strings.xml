@@ -1,4 +1,6 @@
 <resources>
+    <string name="facebook_app_id" translatable="false">2030789220488138</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb2030789220488138</string>
     <string name="app_name" translatable="false">School1</string>
     <string name="website_uri" translatable="false">http://com.whirlwind-studios.org</string>
     <string name="patreon_uri" translatable="false">https://www.patreon.com/school1</string>
@@ -199,14 +201,16 @@
     <string name="about_version_name_title">Version Name</string>
     <string name="about_version_code_title">Version Number</string>
 
+    <string name="account_user_email">Your email</string>
     <string name="account_school_title">Your school</string>
-    <string name="account_category_recover">Recover</string>
-    <string name="account_recover_password">Recover password</string>
+    <string name="account_reset_password">Reset password</string>
+    <string name="account_change_user">Change user</string>
 
     <string name="warning_delete_entry">Delete entry? This operation cannot be undone!</string>
     <string name="warning_no_courses">You need to be logged in to at least one course to be able to make use of School1\'s online capabilities</string>
     <string name="warning_delete_course">If you delete a course, ALL content associated with it will be unavailable forever, e.g. tasks or appointments. Delete anyway?</string>
     <string name="warning_empty_lessons">You haven\'t added any lessons to your course. Finish anyway?</string>
+    <string name="warning_anonymous_auth">With anonymous sign-in you also won\'t be able access you account on another device or after a reinstall. You can always add a sign-in method later.</string>
     <string name="monday">monday</string>
     <string name="tuesday">tuesday</string>
     <string name="wednesday">wednesday</string>
