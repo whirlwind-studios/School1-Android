@@ -132,6 +132,7 @@ public class SigninActivity extends BaseActivity implements OnCompleteListener<A
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // FIXME: Issue Code 12501
         if (requestCode == RC_SIGNIN_GOOGLE) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
