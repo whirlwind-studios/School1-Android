@@ -52,6 +52,7 @@
     <string name="text_sign_in_button">Sign in</string>
     <string name="text_sign_in_google_button">Sign in with Google</string>
     <string name="text_sign_in_facebook_button">Sign in with Facebook</string>
+    <string name="text_sign_in_anonymous_button">Sign in anonymously</string>
     <string name="text_sign_out_button">Sign out</string>
     <string name="text_create_account_button">Create account</string>
     <string name="text_verify_email_button">Verify email</string>

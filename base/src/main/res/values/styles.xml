@@ -14,7 +14,7 @@
 
     <style name="AppTheme.NoActionBar.Signin">
         <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 
     <style name="NavigationHeader" parent="ThemeOverlay.AppCompat.Dark">

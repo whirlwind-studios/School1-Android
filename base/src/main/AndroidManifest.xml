@@ -36,10 +36,6 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SigninChooserActivity" />
-        <activity android:name=".activity.EmailPasswordActivity" />
-        <activity android:name=".activity.GoogleSignInActivity" />
-        <activity android:name=".activity.FacebookLoginActivity" />
         <activity
             android:name=".activity.ConfigItemActivity"
             android:parentActivityName="activity.MainActivity"
