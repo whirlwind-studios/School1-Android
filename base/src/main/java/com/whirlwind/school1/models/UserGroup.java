@@ -8,7 +8,5 @@ public class UserGroup {
     public int flags;
 
     // Properties
-    public String name;
-
-    // public String uid; // Do we need that?
+    public String groupId;
 }

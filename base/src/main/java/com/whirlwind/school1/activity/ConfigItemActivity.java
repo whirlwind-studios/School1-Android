@@ -64,7 +64,7 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            flags = args.getIntExtra("flags", ConfigurationHelper.getShareDefault(this) ? Item.PRIVATE : Item.SHARED);
+            flags = args.getIntExtra("flags", ConfigurationHelper.getShareDefault(this) ? Item.SHARED : Item.PRIVATE);
             if (args.getBooleanExtra("isNew", true))
                 date = System.currentTimeMillis() / 1000;
             else {
@@ -156,7 +156,7 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
             shareCheckBox.setText(R.string.hint_share_checkbox_on);
             courseSpinner.setVisibility(View.VISIBLE);
         } else {
-            flags &= ~Item.PRIVATE;
+            flags &= ~Item.SHARED;
             shareCheckBox.setText(R.string.hint_share_checkbox_off);
             courseSpinner.setVisibility(View.GONE);
         }

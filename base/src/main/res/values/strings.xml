@@ -90,8 +90,8 @@
     <string name="message_appointment_share">"(on "</string>
     <string name="message_course_popup_participant">You\'re logged in as a course participant</string>
     <string name="message_course_popup_admin">"Because you\'re logged in the course\'s admin, here\'s its password: "</string>
-    <string name="message_date_today">"Today, "</string>
-    <string name="message_date_tomorrow">"Tomorrow, "</string>
+    <string name="message_date_today">"Today"</string>
+    <string name="message_date_tomorrow">"Tomorrow"</string>
     <string name="message_date_this_week">This week</string>
     <string name="message_date_next_week">Next week</string>
     <string name="message_this_weekend">This weekend</string>

@@ -63,8 +63,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //if (auth.getCurrentUser() == null)
-        startActivity(new Intent(this, SigninActivity.class));
+        if (auth.getCurrentUser() == null)
+            startActivity(new Intent(this, SigninActivity.class));
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                //updateFragment();
+                updateFragment();
             }
         };
         drawerLayout.addDrawerListener(toggle);
@@ -212,14 +212,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                             for (Item task : tasks)
                                 builder.append(task.subject).append(": ").append(task.description)
                                         .append(getString(R.string.message_task_share))
-                                        .append(DateHelper.getStringRelative(MainActivity.this, task.date)).append(")\n\n");
+                                        .append(DateHelper.getStringRelative(MainActivity.this, task.getDate())).append(")\n\n");
                         }
                         if (!appointments.isEmpty()) {
                             builder.append(getString(R.string.title_appointment_list)).append(": \n");
                             for (Item appointment : appointments)
                                 builder.append(appointment.subject).append(": ").append(appointment.description)
                                         .append(getString(R.string.message_appointment_share))
-                                        .append(DateHelper.getStringRelative(MainActivity.this, appointment.date)).append(")\n\n");
+                                        .append(DateHelper.getStringRelative(MainActivity.this, appointment.getDate())).append(")\n\n");
                         }
                         if (builder.length() > 0)
                             builder.delete(builder.length() - 2, builder.length());

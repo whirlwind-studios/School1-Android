@@ -1,12 +1,17 @@
 package com.whirlwind.school1.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
+import com.whirlwind.school1.helper.BackendHelper;
+import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
 
 import java.security.InvalidParameterException;
@@ -20,48 +25,91 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     private final List<RowItem> rowItems = new ArrayList<>();
 
-    public DashboardAdapter() {
-        int today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        long date = Calendar.getInstance().getTimeInMillis() / 1000;
-        if (today >= Calendar.MONDAY && today <= Calendar.WEDNESDAY) {
-            rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Section("Tomorrow"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Section("This week"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", 0));
-        } else if (today == Calendar.THURSDAY) {
-            rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Section("Tomorrow"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Section("Weekend"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", 0));
-        } else if (today == Calendar.FRIDAY) {
-            rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Section("Weekend"));
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_WEEK, 2);
-            rowItems.add(new Item("LOL", "It's quite empty here...", calendar.getTimeInMillis() / 1000));
-        } else if (today == Calendar.SATURDAY) {
-            rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-            rowItems.add(new Section("Tomorrow"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-        } else if (today == Calendar.SUNDAY) {
-            rowItems.add(new Section("Today"));
-            rowItems.add(new Item("LOL", "It's quite empty here...", date));
-        }
+    public DashboardAdapter(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-        rowItems.add(new Section("Next week"));
-        rowItems.add(new Item("LOL", "It's quite empty here...", 0));
-        rowItems.add(new Item("LOL", "It's quite empty here...", 0));
+        // Today is default
+        rowItems.add(new Section(context.getString(R.string.message_date_today), getSectionDate(calendar)));
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        if (today >= Calendar.MONDAY && today <= Calendar.WEDNESDAY) {
+            rowItems.add(new Section(context.getString(R.string.message_date_tomorrow), getSectionDate(calendar)));
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            rowItems.add(new Section("This week", getSectionDate(calendar)));
+        } else if (today == Calendar.THURSDAY) {
+            rowItems.add(new Section("Tomorrow", getSectionDate(calendar)));
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            rowItems.add(new Section("Weekend", getSectionDate(calendar)));
+        } else if (today == Calendar.FRIDAY)
+            rowItems.add(new Section("Weekend", getSectionDate(calendar)));
+        else if (today == Calendar.SATURDAY)
+            rowItems.add(new Section("Tomorrow", getSectionDate(calendar)));
+
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        if (calendar.getFirstDayOfWeek() != Calendar.SUNDAY && today != Calendar.SUNDAY)
+            calendar.add(Calendar.WEEK_OF_YEAR, 1);
+
+        rowItems.add(new Section("Next week", getSectionDate(calendar)));
 
         // TODO: Holiday and interval sections (between two holidays, to give a clearer overview over whats happening in the long run)
-        rowItems.add(new Section("Until the end of the universe"));
-        rowItems.add(new Item("LOL", "It's quite empty here...", 0));
+        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+        rowItems.add(new Section("Until the end of the universe", getSectionDate(calendar)));
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("items")
+                .addChildEventListener(new BackendHelper.ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Item item = dataSnapshot.getValue(Item.class);
+                        if (item != null) {
+                            item.setKey(dataSnapshot.getKey());
+
+                            for (int i = rowItems.size(); i > 0; i--)
+                                if (item.getDate() >= rowItems.get(i - 1).getDate()) {
+                                    rowItems.add(i, item);
+                                    break;
+                                }
+                            notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Item item = dataSnapshot.getValue(Item.class);
+                        if (item != null) {
+                            item.setKey(dataSnapshot.getKey());
+                            for (int i = 0; i < rowItems.size(); i++)
+                                if (item.getKey().equals(rowItems.get(i).getKey())) {
+                                    rowItems.set(i, item);
+                                    break;
+                                }
+                            notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        String key = dataSnapshot.getKey();
+                        for (int i = 0; i < rowItems.size(); i++)
+                            if (key.equals(rowItems.get(i).getKey())) {
+                                rowItems.remove(i);
+                                break;
+                            }
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        notifyDataSetChanged();
+                    }
+                });
+    }
+
+    private static long getSectionDate(Calendar calendar) {
+        return DateHelper.getDate(calendar, DateHelper.START);
     }
 
     @Override
@@ -88,6 +136,13 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
     }
 
     public interface RowItem {
+        String getKey();
+
+        void setKey(String key);
+
+        long getDate();
+
+        void setDate(long date);
         void populate(View view, int position);
     }
 
@@ -101,9 +156,30 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     private static class Section implements RowItem {
         private String header;
+        private long date;
 
-        private Section(String header) {
+        private Section(String header, long date) {
             this.header = header;
+            setDate(date);
+        }
+
+        @Override
+        public long getDate() {
+            return date;
+        }
+
+        @Override
+        public void setDate(long date) {
+            this.date = date;
+        }
+
+        @Override
+        public String getKey() {
+            return null;
+        }
+
+        @Override
+        public void setKey(String key) {
         }
 
         @Override

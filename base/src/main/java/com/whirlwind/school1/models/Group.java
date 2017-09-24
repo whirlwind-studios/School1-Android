@@ -6,6 +6,7 @@ public class Group {
 
     // Metadata
     public int flags;
+    public String parentGroup; // null for Schools, uid of parent for every other type
 
     // Properties
     public String iconLink;

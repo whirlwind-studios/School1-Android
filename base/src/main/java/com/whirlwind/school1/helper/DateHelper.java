@@ -96,7 +96,7 @@ public class DateHelper {
                             "([^\\p{Alpha}']|('[\\p{Alpha}]+'))*y+([^\\p{Alpha}']|('[\\p{Alpha}]+'))*",
                             ""));
 
-        return string + dateFormat.format(date);
+        return string + dateFormat.format(date * 1000);
     }
 
     public static String getStringRelative(Context context, Calendar calendar) {

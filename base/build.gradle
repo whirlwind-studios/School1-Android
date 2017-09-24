@@ -9,22 +9,22 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
     }
-    buildTypes{
-        release{
+    buildTypes {
+        release {
             resValue "string", "app_name", "School1"
 
             buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"504584931701-457rlngk903psig92569ug19tcskaosj.apps.googleusercontent.com\""
             resValue "string", "facebook_app_id", "2030789220488138"
             resValue "string", "fb_login_protocol_scheme", "fb2030789220488138"
         }
-        debug{
+        debug {
             resValue "string", "app_name", "School1 Debug"
 
             buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"677827773104-lbrraai991jca6j7sm266d54fj68kpch.apps.googleusercontent.com\""
             resValue "string", "facebook_app_id", "131726504141018"
             resValue "string", "fb_login_protocol_scheme", "fb131726504141018"
         }
-        qa{
+        qa {
             resValue "string", "app_name", "School1 QA"
 
             buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"506807684032-g6csijg3oui1gv59a6mork8u5eiv6n9h.apps.googleusercontent.com\""
