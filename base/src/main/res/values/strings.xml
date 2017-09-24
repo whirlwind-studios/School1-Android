@@ -1,7 +1,4 @@
 <resources>
-    <string name="facebook_app_id" translatable="false">2030789220488138</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb2030789220488138</string>
-    <string name="app_name" translatable="false">School1</string>
     <string name="website_uri" translatable="false">http://com.whirlwind-studios.org</string>
     <string name="patreon_uri" translatable="false">https://www.patreon.com/school1</string>
     <string name="mail_uri" translatable="false">mailto:com.whirlwind.devstudios@gmail.com</string>

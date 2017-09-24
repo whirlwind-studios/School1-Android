@@ -43,6 +43,7 @@ public class SigninActivity extends BaseActivity implements OnCompleteListener<A
     private LoginButton facebookButton;
 
     private CallbackManager callbackManager;
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,16 +93,18 @@ public class SigninActivity extends BaseActivity implements OnCompleteListener<A
         googleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID)
-                        .requestEmail()
-                        .build();
-                GoogleApiClient client = new GoogleApiClient.Builder(SigninActivity.this)
-                        .enableAutoManage(SigninActivity.this, SigninActivity.this)
-                        .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                        .build();
+                if (googleApiClient == null) {
+                    GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID)
+                            .requestEmail()
+                            .build();
+                    googleApiClient = new GoogleApiClient.Builder(SigninActivity.this)
+                            .enableAutoManage(SigninActivity.this, SigninActivity.this)
+                            .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                            .build();
+                }
 
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(client);
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                 startActivityForResult(signInIntent, RC_SIGNIN_GOOGLE);
             }
         });
@@ -152,7 +155,7 @@ public class SigninActivity extends BaseActivity implements OnCompleteListener<A
         if (task.isSuccessful())
             onSuccess(task.getResult().getUser());
         else
-            onFailure(task.getResult().toString());
+            onFailure(task.getException().getMessage());
     }
 
     private void onSuccess(UserInfo user) {
