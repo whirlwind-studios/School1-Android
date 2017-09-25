@@ -9,6 +9,7 @@ import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.DashboardAdapter;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
+import com.whirlwind.school1.popup.ItemPopup;
 
 import java.util.Calendar;
 
@@ -76,6 +77,13 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
             itemDate.setVisibility(View.GONE);
             ((RelativeLayout.LayoutParams) itemDescription.getLayoutParams()).addRule(RelativeLayout.CENTER_VERTICAL);
         }
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new ItemPopup(Item.this).show();
+            }
+        });
     }
 
     public long getDate() {

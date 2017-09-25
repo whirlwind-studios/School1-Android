@@ -49,7 +49,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        if (calendar.getFirstDayOfWeek() != Calendar.SUNDAY && today != Calendar.SUNDAY)
+        if (calendar.getFirstDayOfWeek() != Calendar.SUNDAY || today != Calendar.SUNDAY)
             calendar.add(Calendar.WEEK_OF_YEAR, 1);
 
         rowItems.add(new Section(context.getString(R.string.section_title_next_week), getSectionDate(calendar)));
