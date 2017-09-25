@@ -7,12 +7,13 @@ import android.widget.TextView;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.DashboardAdapter;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 
 import java.util.Calendar;
 
 @IgnoreExtraProperties
-public class Item implements DashboardAdapter.RowItem {
+public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
 
     public static final int TASK = 0, APPOINTMENT = 1, TYPE_MASK = 7; // max 8 different types
     public static final int PRIVATE = 0, SHARED = 8;

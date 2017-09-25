@@ -22,11 +22,12 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
+import com.whirlwind.school1.adapter.CourseSelectionAdapter;
 import com.whirlwind.school1.base.BaseActivity;
-import com.whirlwind.school1.helper.ConfigurationHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
 import com.whirlwind.school1.popup.DatePickerPopup;
@@ -44,7 +45,8 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
 
     private long date;
     private int flags;
-    private String groupId;
+
+    private CourseSelectionAdapter courseSelectionAdapter = new CourseSelectionAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +66,12 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            flags = args.getIntExtra("flags", ConfigurationHelper.getShareDefault(this) ? Item.SHARED : Item.PRIVATE);
-            if (args.getBooleanExtra("isNew", true))
+            if (args.getBooleanExtra("isNew", true)) {
+                flags &= ~Item.SHARED;
                 date = System.currentTimeMillis() / 1000;
+            }
             else {
-                date = args.getLongExtra("date", System.currentTimeMillis());
+                date = args.getLongExtra("date", System.currentTimeMillis() / 1000);
                 subject.setText(args.getStringExtra("subject"));
                 description.setText(args.getStringExtra("description"));
             }
@@ -128,23 +131,24 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
             }
         });
 
-        /*if (Group.getAdminGroups(dataInterface.getCourses()).isEmpty()) {
-            shareCheckBox.setVisibility(View.GONE);
-            flags &= ~Item.PRIVATE;
-        } else {*/
-        shareCheckBox.setOnCheckedChangeListener(this);
+
         shareCheckBox.setChecked((flags & Item.SHARED) != 0);
-        //}
+        onCheckedChanged(shareCheckBox, (flags & Item.SHARED) != 0);
+        shareCheckBox.setOnCheckedChangeListener(this);
 
-        courseSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.types)));
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        courseSpinner.setAdapter(courseSelectionAdapter);
+        courseSpinner.setOnItemSelectedListener(courseSelectionAdapter);
+        courseSelectionAdapter.setSharableListener(new CourseSelectionAdapter.sharableListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: Add code to save groupId
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void sharable(boolean sharable) {
+                if (sharable)
+                    shareCheckBox.setEnabled(true);
+                else {
+                    shareCheckBox.setEnabled(false);
+                    shareCheckBox.setChecked(false);
+                    onCheckedChanged(shareCheckBox, false);
+                    flags &= ~Item.SHARED;
+                }
             }
         });
     }
@@ -190,8 +194,12 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     }
 
     private void done() {
+        String groupId = courseSelectionAdapter.getGroupId();
+        if (!shareCheckBox.isChecked())
+            groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference items = FirebaseDatabase.getInstance().getReference()
                 .child("items");
+
         Item item = new Item(groupId, subject.getText().toString(), description.getText().toString(),
                 date, flags);
         if (getIntent().getBooleanExtra("isNew", true))

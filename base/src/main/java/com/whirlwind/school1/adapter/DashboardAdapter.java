@@ -23,28 +23,28 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     private static final int VIEW_TYPE_HEADER = 0, VIEW_TYPE_ITEM = 1;
 
-    private final List<RowItem> rowItems = new ArrayList<>();
+    private final List<Object> rowItems = new ArrayList<>();
 
     public DashboardAdapter(Context context) {
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
 
         // Today is default
-        rowItems.add(new Section(context.getString(R.string.message_date_today), getSectionDate(calendar)));
+        rowItems.add(new Section(context.getString(R.string.section_title_today), getSectionDate(calendar)));
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
         if (today >= Calendar.MONDAY && today <= Calendar.WEDNESDAY) {
-            rowItems.add(new Section(context.getString(R.string.message_date_tomorrow), getSectionDate(calendar)));
+            rowItems.add(new Section(context.getString(R.string.section_title_tomorrow), getSectionDate(calendar)));
             calendar.add(Calendar.DAY_OF_YEAR, 1);
-            rowItems.add(new Section("This week", getSectionDate(calendar)));
+            rowItems.add(new Section(context.getString(R.string.section_title_this_week), getSectionDate(calendar)));
         } else if (today == Calendar.THURSDAY) {
-            rowItems.add(new Section("Tomorrow", getSectionDate(calendar)));
+            rowItems.add(new Section(context.getString(R.string.section_title_tomorrow), getSectionDate(calendar)));
             calendar.add(Calendar.DAY_OF_YEAR, 1);
-            rowItems.add(new Section("Weekend", getSectionDate(calendar)));
+            rowItems.add(new Section(context.getString(R.string.section_title_weekend), getSectionDate(calendar)));
         } else if (today == Calendar.FRIDAY)
-            rowItems.add(new Section("Weekend", getSectionDate(calendar)));
+            rowItems.add(new Section(context.getString(R.string.section_title_weekend), getSectionDate(calendar)));
         else if (today == Calendar.SATURDAY)
-            rowItems.add(new Section("Tomorrow", getSectionDate(calendar)));
+            rowItems.add(new Section(context.getString(R.string.section_title_tomorrow), getSectionDate(calendar)));
 
         calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -52,7 +52,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         if (calendar.getFirstDayOfWeek() != Calendar.SUNDAY && today != Calendar.SUNDAY)
             calendar.add(Calendar.WEEK_OF_YEAR, 1);
 
-        rowItems.add(new Section("Next week", getSectionDate(calendar)));
+        rowItems.add(new Section(context.getString(R.string.section_title_next_week), getSectionDate(calendar)));
 
         // TODO: Holiday and interval sections (between two holidays, to give a clearer overview over whats happening in the long run)
         calendar.add(Calendar.WEEK_OF_YEAR, 1);
@@ -67,11 +67,14 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                         if (item != null) {
                             item.setKey(dataSnapshot.getKey());
 
-                            for (int i = rowItems.size(); i > 0; i--)
-                                if (item.getDate() >= rowItems.get(i - 1).getDate()) {
-                                    rowItems.add(i, item);
-                                    break;
-                                }
+                            for (int i = rowItems.size(); i > 0; i--) {
+                                Object object = rowItems.get(i - 1);
+                                if (object instanceof RowItem)
+                                    if (item.getDate() >= ((RowItem) object).getDate()) {
+                                        rowItems.add(i, item);
+                                        break;
+                                    }
+                            }
                             notifyDataSetChanged();
                         }
                     }
@@ -81,11 +84,15 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                         Item item = dataSnapshot.getValue(Item.class);
                         if (item != null) {
                             item.setKey(dataSnapshot.getKey());
-                            for (int i = 0; i < rowItems.size(); i++)
-                                if (item.getKey().equals(rowItems.get(i).getKey())) {
-                                    rowItems.set(i, item);
-                                    break;
-                                }
+
+                            for (int i = 0; i < rowItems.size(); i++) {
+                                Object object = rowItems.get(i);
+                                if (object instanceof BackendHelper.Queryable)
+                                    if (item.getKey().equals(((BackendHelper.Queryable) object).getKey())) {
+                                        rowItems.set(i, item);
+                                        break;
+                                    }
+                            }
                             notifyDataSetChanged();
                         }
                     }
@@ -93,11 +100,14 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
                         String key = dataSnapshot.getKey();
-                        for (int i = 0; i < rowItems.size(); i++)
-                            if (key.equals(rowItems.get(i).getKey())) {
-                                rowItems.remove(i);
-                                break;
-                            }
+                        for (int i = 0; i < rowItems.size(); i++) {
+                            Object object = rowItems.get(i);
+                            if (object instanceof BackendHelper.Queryable)
+                                if (key.equals(((BackendHelper.Queryable) object).getKey())) {
+                                    rowItems.remove(i);
+                                    break;
+                                }
+                        }
                         notifyDataSetChanged();
                     }
 
@@ -132,14 +142,12 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        rowItems.get(position).populate(holder.itemView, position);
+        Object object = rowItems.get(position);
+        if (object instanceof RowItem)
+            ((RowItem) object).populate(holder.itemView, position);
     }
 
     public interface RowItem {
-        String getKey();
-
-        void setKey(String key);
-
         long getDate();
 
         void setDate(long date);
@@ -154,7 +162,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         }
     }
 
-    private static class Section implements RowItem {
+    private static class Section implements RowItem, BackendHelper.Queryable {
         private String header;
         private long date;
 

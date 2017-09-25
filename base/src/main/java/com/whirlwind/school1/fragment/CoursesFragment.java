@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CoursesFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class CoursesFragment extends Fragment implements SearchView.OnQueryTextListener, ChildEventListener {
 
     // TODO: Orientation change
     private CourseAdapter adapter;
@@ -63,34 +63,7 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
 
         FirebaseDatabase.getInstance().getReference()
                 .child("courses")
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
-                        onQueryTextChange(lastQuery);
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
-                        onQueryTextChange(lastQuery);
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        courses.remove(dataSnapshot.getKey());
-                        onQueryTextChange(lastQuery);
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+                .addChildEventListener(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null)
@@ -124,6 +97,33 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
                     });
 
         return recyclerView;
+    }
+
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
+        onQueryTextChange(lastQuery);
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        courses.put(dataSnapshot.getKey(), (Group) dataSnapshot.getValue());
+        onQueryTextChange(lastQuery);
+
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+        courses.remove(dataSnapshot.getKey());
+        onQueryTextChange(lastQuery);
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
     }
 
     @Override

@@ -46,8 +46,7 @@
                 android:layout_marginTop="4dp"
                 android:completionThreshold="1"
                 android:imeOptions="actionNext"
-                android:inputType="text"
-                android:maxLength="63" />
+                android:inputType="text" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -64,8 +63,7 @@
 
                 android:layout_marginBottom="4dp"
                 android:layout_marginTop="4dp"
-                android:inputType="textMultiLine|textNoSuggestions"
-                android:maxLength="1023" />
+                android:inputType="textMultiLine" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -82,8 +80,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:checked="true"
-            tools:text="@string/hint_share_checkbox_on" />
+            android:checked="false"
+            android:enabled="false"
+            tools:text="@string/hint_share_checkbox_off" />
 
         <Spinner
             android:id="@+id/activity_config_item_spinner_course"

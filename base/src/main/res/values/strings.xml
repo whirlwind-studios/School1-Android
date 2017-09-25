@@ -19,6 +19,13 @@
     <string name="title_config_appointment_activity">Appointment</string>
     <string name="title_enter_course">Enter course</string>
 
+    <string name="section_title_today">Today</string>
+    <string name="section_title_tomorrow">Tomorrow</string>
+    <string name="section_title_weekend">Weekend</string>
+    <string name="section_title_this_week">This week</string>
+    <string name="section_title_next_week">Next week</string>
+    <string name="section_title_remaining">Remaining</string>
+
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
     <string name="action_finish">Finish</string>
@@ -90,7 +97,7 @@
     <string name="message_appointment_share">"(on "</string>
     <string name="message_course_popup_participant">You\'re logged in as a course participant</string>
     <string name="message_course_popup_admin">"Because you\'re logged in the course\'s admin, here\'s its password: "</string>
-    <string name="message_date_today">"Today"</string>
+    <string name="message_date_today">"Today, "</string>
     <string name="message_date_tomorrow">"Tomorrow"</string>
     <string name="message_date_this_week">This week</string>
     <string name="message_date_next_week">Next week</string>
