@@ -25,7 +25,6 @@ import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.CourseAdapter;
 import com.whirlwind.school1.adapter.FilterAdapter;
 import com.whirlwind.school1.models.Group;
-import com.whirlwind.school1.models.UserGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
     // TODO: Orientation change
     private CourseAdapter adapter;
     private Map<String, Group> courses = new HashMap<>();
-    private Map<String, UserGroup> userGroups = new HashMap<>();
+    //private Map<String, UserGroup> userGroups = new HashMap<>();
     private String lastQuery;
 
     @Override
@@ -66,7 +65,7 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
                 .addChildEventListener(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null)
+        /*if (auth.getCurrentUser() != null)
             FirebaseDatabase.getInstance().getReference()
                     .child("users")
                     .child(auth.getCurrentUser().getUid())
@@ -94,7 +93,7 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                         }
-                    });
+                    });*/
 
         return recyclerView;
     }
@@ -156,8 +155,8 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
             Group course = entry.getValue();
             int sortIndex = FilterAdapter.filter(newText, course.name, course.description);
             if (sortIndex != -1) {
-                if (userGroups.containsKey(entry.getKey()))
-                    sortIndex += Integer.MAX_VALUE / 3;
+                /*if (userGroups.containsKey(entry.getKey()))
+                    sortIndex += Integer.MAX_VALUE / 3;*/
                 filtered.add(new CourseAdapter.SortableCourse(course, sortIndex));
             }
         }

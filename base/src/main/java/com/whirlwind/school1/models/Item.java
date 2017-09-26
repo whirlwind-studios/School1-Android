@@ -17,7 +17,6 @@ import java.util.Calendar;
 public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
 
     public static final int TASK = 0, APPOINTMENT = 1;
-    public String groupId;
     public boolean shared;
     // Properties
     public int type;
@@ -35,8 +34,7 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
         this.date = date;
     }
 
-    public Item(String groupId, String subject, String description, long date, int type, boolean shared) {
-        this.groupId = groupId;
+    public Item(String subject, String description, long date, int type, boolean shared) {
         this.subject = subject;
         this.description = description;
         this.date = date;

@@ -194,9 +194,10 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
         if (!shareCheckBox.isChecked())
             groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference items = FirebaseDatabase.getInstance().getReference()
-                .child("items");
+                .child("items")
+                .child(groupId);
 
-        Item item = new Item(groupId, subject.getText().toString(), description.getText().toString(),
+        Item item = new Item(subject.getText().toString(), description.getText().toString(),
                 date, type, shareCheckBox.isChecked());
         if (getIntent().getBooleanExtra("isNew", true))
             items.push().setValue(item);

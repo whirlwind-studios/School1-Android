@@ -6,7 +6,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public class Lesson {
 
     // Metadata
-    public String groupId;
     public String teacher,
             room;
 
