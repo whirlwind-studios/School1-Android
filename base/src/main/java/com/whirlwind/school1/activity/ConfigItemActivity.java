@@ -39,12 +39,13 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
 
     private AutoCompleteTextView subject;
     private TextInputEditText description;
+    private Button datePicker;
     private CheckBox shareCheckBox;
     private Spinner typeSpinner,
             courseSpinner;
 
     private long date;
-    private int flags;
+    private int type = Item.TASK;
 
     private CourseSelectionAdapter courseSelectionAdapter = new CourseSelectionAdapter();
 
@@ -56,28 +57,28 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
         Intent args = getIntent();
 
         Toolbar toolbar = findViewById(R.id.activity_config_item_toolbar);
+        typeSpinner = findViewById(R.id.activity_config_item_spinner_type);
         subject = findViewById(R.id.activity_config_item_edit_text_subject);
         description = findViewById(R.id.activity_config_item_edit_text_description);
-        Button datePicker = findViewById(R.id.activity_config_item_button_date_picker);
+        datePicker = findViewById(R.id.activity_config_item_button_date_picker);
         shareCheckBox = findViewById(R.id.activity_config_item_checkbox_share);
-        typeSpinner = findViewById(R.id.activity_config_item_spinner_type);
         courseSpinner = findViewById(R.id.activity_config_item_spinner_course);
 
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
-            if (args.getBooleanExtra("isNew", true)) {
-                flags &= ~Item.SHARED;
+            if (args.getBooleanExtra("isNew", true))
                 date = System.currentTimeMillis() / 1000;
-            }
             else {
-                date = args.getLongExtra("date", System.currentTimeMillis() / 1000);
+                type = args.getIntExtra("type", 0);
                 subject.setText(args.getStringExtra("subject"));
                 description.setText(args.getStringExtra("description"));
+                date = args.getLongExtra("date", System.currentTimeMillis() / 1000);
+                shareCheckBox.setChecked(args.getBooleanExtra("shared", false));
             }
         } else {
-            flags = savedInstanceState.getInt("flags");
             date = savedInstanceState.getLong("date");
+            shareCheckBox.setChecked(savedInstanceState.getBoolean("shared"));
         }
 
         if (getSupportActionBar() != null) {
@@ -99,15 +100,14 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
         typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                flags &= ~Item.TYPE_MASK;
-                flags |= position;
+                type = position;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        typeSpinner.setSelection(flags & Item.TYPE_MASK);
+        typeSpinner.setSelection(type);
 
         //subject.setAdapter(new FilterAdapter<>(this, android.R.layout.simple_list_item_1, Lesson.removeDuplicates(dataInterface.getLessons())));
 
@@ -131,9 +131,7 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
             }
         });
 
-
-        shareCheckBox.setChecked((flags & Item.SHARED) != 0);
-        onCheckedChanged(shareCheckBox, (flags & Item.SHARED) != 0);
+        onCheckedChanged(shareCheckBox, shareCheckBox.isChecked());
         shareCheckBox.setOnCheckedChangeListener(this);
 
         courseSpinner.setAdapter(courseSelectionAdapter);
@@ -147,7 +145,6 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
                     shareCheckBox.setEnabled(false);
                     shareCheckBox.setChecked(false);
                     onCheckedChanged(shareCheckBox, false);
-                    flags &= ~Item.SHARED;
                 }
             }
         });
@@ -156,11 +153,9 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         if (isChecked) {
-            flags |= Item.SHARED;
             shareCheckBox.setText(R.string.hint_share_checkbox_on);
             courseSpinner.setVisibility(View.VISIBLE);
         } else {
-            flags &= ~Item.SHARED;
             shareCheckBox.setText(R.string.hint_share_checkbox_off);
             courseSpinner.setVisibility(View.GONE);
         }
@@ -189,7 +184,8 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("flags", flags);
+        outState.putBoolean("shared", shareCheckBox.isChecked());
+        outState.putInt("type", type);
         outState.putLong("date", date);
     }
 
@@ -201,7 +197,7 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
                 .child("items");
 
         Item item = new Item(groupId, subject.getText().toString(), description.getText().toString(),
-                date, flags);
+                date, type, shareCheckBox.isChecked());
         if (getIntent().getBooleanExtra("isNew", true))
             items.push().setValue(item);
         else

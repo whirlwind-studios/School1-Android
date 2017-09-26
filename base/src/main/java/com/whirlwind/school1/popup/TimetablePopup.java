@@ -30,12 +30,10 @@ public class TimetablePopup extends DialogPopup {
         List<Lesson> lessons = new ArrayList<>();
         if (maxLessonHour == 0) {
             for (Lesson lesson : lessons) {
-                int time = lesson.time & 248;
-                int day = lesson.time & 7;
-                if (time > maxLessonHour)
-                    maxLessonHour = time;
-                if (day > maxLessonDay)
-                    maxLessonDay = day;
+                if (lesson.hour > maxLessonHour)
+                    maxLessonHour = lesson.hour;
+                if (lesson.day > maxLessonDay)
+                    maxLessonDay = lesson.day;
             }
             maxLessonHour = maxLessonHour >> 3;
             maxLessonDay++;
@@ -60,7 +58,7 @@ public class TimetablePopup extends DialogPopup {
             textView.setText(getShorthand(lesson.title, width));
 
             GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams(
-                    GridLayout.spec((lesson.time & 248) >> 3), GridLayout.spec(lesson.time & 7));
+                    GridLayout.spec(lesson.hour), GridLayout.spec(lesson.day));
             gridLayout.addView(textView, gridParams);
         }
 

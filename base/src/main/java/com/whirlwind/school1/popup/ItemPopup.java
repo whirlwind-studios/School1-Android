@@ -55,7 +55,7 @@ public class ItemPopup extends DialogPopup {
 
         StringBuilder text = new StringBuilder();
         text.append(item.description)
-                .append(context.getString((item.flags & Item.TYPE_MASK) == Item.TASK ? R.string.message_task_popup : R.string.message_appointment_popup))
+                .append(context.getString(item.type == Item.TASK ? R.string.message_task_popup : R.string.message_appointment_popup))
                 .append(DateHelper.getString(item.date));
 
         //if (dataInterface.isModifiable(event)) {
@@ -72,7 +72,7 @@ public class ItemPopup extends DialogPopup {
                     context.startActivity(new Intent(context, ConfigItemActivity.class).putExtra("isNew", false)
                             .putExtra("uid", item.getKey()).putExtra("subject", item.subject)
                             .putExtra("description", item.description).putExtra("date", item.date)
-                            .putExtra("flags", item.flags));
+                            .putExtra("type", item.type).putExtra("shared", item.shared));
                     return true;
                 } else if (menuItem.getItemId() == R.id.action_delete) {
                     new ConfirmationPopup(

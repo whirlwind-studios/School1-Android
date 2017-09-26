@@ -81,20 +81,8 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        Item item = dataSnapshot.getValue(Item.class);
-                        if (item != null) {
-                            item.setKey(dataSnapshot.getKey());
-
-                            for (int i = 0; i < rowItems.size(); i++) {
-                                Object object = rowItems.get(i);
-                                if (object instanceof BackendHelper.Queryable)
-                                    if (item.getKey().equals(((BackendHelper.Queryable) object).getKey())) {
-                                        rowItems.set(i, item);
-                                        break;
-                                    }
-                            }
-                            notifyDataSetChanged();
-                        }
+                        onChildRemoved(dataSnapshot);
+                        onChildAdded(dataSnapshot, s);
                     }
 
                     @Override

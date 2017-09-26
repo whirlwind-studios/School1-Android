@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.models.Group;
-import com.whirlwind.school1.models.UserGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +36,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
 
         holder.name.setText(course.name);
 
-        int resId = (course.flags & UserGroup.ADMIN) != 0 ? R.string.message_course_admin : R.string.message_course_participant;
-        holder.permission.setText(resId);
+        //int resId = course. ? R.string.message_course_admin : R.string.message_course_participant;
+        //holder.permission.setText(resId);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

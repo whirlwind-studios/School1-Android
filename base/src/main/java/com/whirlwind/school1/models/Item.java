@@ -16,11 +16,11 @@ import java.util.Calendar;
 @IgnoreExtraProperties
 public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
 
-    public static final int TASK = 0, APPOINTMENT = 1, TYPE_MASK = 7; // max 8 different types
-    public static final int PRIVATE = 0, SHARED = 8;
+    public static final int TASK = 0, APPOINTMENT = 1;
     public String groupId;
-    public int flags;
+    public boolean shared;
     // Properties
+    public int type;
     public String subject, description;
     public long date;
     // Metadata
@@ -35,12 +35,13 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
         this.date = date;
     }
 
-    public Item(String groupId, String subject, String description, long date, int flags) {
+    public Item(String groupId, String subject, String description, long date, int type, boolean shared) {
         this.groupId = groupId;
         this.subject = subject;
         this.description = description;
         this.date = date;
-        this.flags = flags;
+        this.type = type;
+        this.shared = shared;
     }
 
     private static boolean displayDate(long date) {
@@ -61,11 +62,11 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
                 itemDate = view.findViewById(R.id.row_layout_dashboard_date);
 
         itemSubject.setText(subject.substring(0, Math.min(subject.length(), 3)));
-        if ((flags & TYPE_MASK) == TASK)
+        if (type == TASK)
             itemSubject.setBackgroundResource(R.drawable.circle_subject_task); // Task/ appointment
         else
             itemSubject.setBackgroundResource(R.drawable.circle_subject_appointment);
-        itemSubject.setEnabled((flags & SHARED) == PRIVATE); // private/shared indicator
+        itemSubject.setEnabled(!shared); // private/shared indicator
 
         itemDescription.setText(description);
 

@@ -196,11 +196,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Item item = snapshot.getValue(Item.class);
                             new TextPopup("Item", String.valueOf(snapshot.getValue())).show();
-                            if (item != null && (item.flags & Item.SHARED) != 0) {
-                                int flags = item.flags & Item.TYPE_MASK;
-                                if (flags == Item.TASK)
+                            if (item != null && item.shared) {
+                                if (item.type == Item.TASK)
                                     tasks.add(item);
-                                else if (flags == Item.APPOINTMENT)
+                                else if (item.type == Item.APPOINTMENT)
                                     appointments.add(item);
                             }
                         }
