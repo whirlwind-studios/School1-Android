@@ -65,6 +65,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         if (auth.getCurrentUser() == null)
             startActivity(new Intent(this, SigninActivity.class));
+
+        // TODO: If user is not logged into a school, show snackbar with link to open SchoolLoginActivity
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
