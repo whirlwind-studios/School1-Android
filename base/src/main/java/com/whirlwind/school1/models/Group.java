@@ -31,4 +31,9 @@ public class Group implements BackendHelper.Queryable {
     public void setKey(String key) {
         this.key = key;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

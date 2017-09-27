@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
@@ -31,6 +33,7 @@ import com.whirlwind.school1.fragment.TimetableFragment;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
+import com.whirlwind.school1.popup.SnackbarPopup;
 import com.whirlwind.school1.popup.TextPopup;
 
 import java.util.LinkedList;
@@ -66,7 +69,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (auth.getCurrentUser() == null)
             startActivity(new Intent(this, SigninActivity.class));
 
-        // TODO: If user is not logged into a school, show snackbar with link to open SchoolLoginActivity
+        // TODO: If user doesn't have any courses, snackbar with link to courses fragment
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.activity_main_toolbar);
@@ -94,10 +97,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
             name.setText(auth.getCurrentUser().getDisplayName());
 
-            FirebaseDatabase.getInstance().getReference()
+            DatabaseReference properties = FirebaseDatabase.getInstance().getReference()
                     .child("users")
                     .child(auth.getCurrentUser().getUid())
-                    .child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                    .child("properties");
+
+            properties.child("schoolId").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() == null)
+                        new SnackbarPopup("You aren't logged in a schooool", Snackbar.LENGTH_INDEFINITE, false)
+                                .setAction("Open me", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        startActivity(new Intent(MainActivity.this, SchoolLoginActivity.class));
+                                    }
+                                }).show();
+                }
+            });
+            properties.child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
