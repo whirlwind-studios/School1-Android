@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(new Intent(this, SigninActivity.class));
 
         // TODO: If user doesn't have any courses, snackbar with link to courses fragment
+        // TODO: Welcome task
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.activity_main_toolbar);
@@ -97,12 +98,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
             name.setText(auth.getCurrentUser().getDisplayName());
 
-            DatabaseReference properties = FirebaseDatabase.getInstance().getReference()
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                     .child("users")
-                    .child(auth.getCurrentUser().getUid())
-                    .child("properties");
+                    .child(auth.getCurrentUser().getUid());
 
-            properties.child("schoolId").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+            reference.child("school").addValueEventListener(new BackendHelper.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() == null)
@@ -113,13 +113,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                         startActivity(new Intent(MainActivity.this, SchoolLoginActivity.class));
                                     }
                                 }).show();
-                }
-            });
-            properties.child("schoolName").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
-                    school.setText(String.valueOf(dataSnapshot.getValue()));
+                    else {
+                        TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
+                        school.setText(String.valueOf(dataSnapshot.getValue()));
+                    }
                 }
             });
         }

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.R;
@@ -32,12 +33,13 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
     private TextView signupTextView;
 
     private List<Group> schools = new ArrayList<>();
-    private ArrayAdapter<Group> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_school_login);
+
+        // TODO: Failure messages
 
         nameAutoCompleteTextView = findViewById(R.id.activity_school_login_autocomplete_text_view_name);
         passwordEditText = findViewById(R.id.activity_school_login_edit_text_password);
@@ -51,53 +53,34 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
             getSupportActionBar().setTitle(R.string.title_account_school);
         }
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, schools);
-        nameAutoCompleteTextView.setAdapter(adapter);
 
-        // TODO: Cloud functions, on-the-fly suggestion updates, functionality
         FirebaseDatabase.getInstance().getReference()
                 .child("schools")
-                .addChildEventListener(new BackendHelper.ChildEventListener() {
+                .addValueEventListener(new BackendHelper.ValueEventListener() {
                     @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Group school = dataSnapshot.getValue(Group.class);
-                        if (school != null) {
-                            school.setKey(dataSnapshot.getKey());
-                            schools.add(school);
-                            adapter.add(school);
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        schools.clear();
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
+                            Group school = child.getValue(Group.class);
+                            if (school != null) {
+                                school.setKey(child.getKey());
+                                schools.add(school);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        Group school = dataSnapshot.getValue(Group.class);
-                        if (school != null) {
-                            school.setKey(dataSnapshot.getKey());
-                            for (int i = 0; i < schools.size(); i++)
-                                if (schools.get(i).getKey().equals(school.getKey())) {
-                                    Group oldSchool = schools.get(i);
-                                    adapter.remove(oldSchool);
-                                    adapter.add(school);
-                                    schools.set(i, school);
-                                    break;
-                                }
-                        }
+                        nameAutoCompleteTextView.setAdapter(new ArrayAdapter<>(SchoolLoginActivity.this, android.R.layout.simple_list_item_1, schools));
                     }
+                });
 
+        FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("school")
+                .addValueEventListener(new BackendHelper.ValueEventListener() {
                     @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        Group school = dataSnapshot.getValue(Group.class);
-                        if (school != null) {
-                            for (int i = 0; i < schools.size(); i++)
-                                if (schools.get(i).getKey().equals(school.getKey())) {
-                                    adapter.remove(schools.remove(i));
-                                    break;
-                                }
-                        }
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue(String.class) != null)
+                            finish();
                     }
                 });
 
@@ -118,19 +101,37 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         SpannableString spannableString = new SpannableString(signupText);
         spannableString.setSpan(new URLSpan(""), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         signupTextView.setText(spannableString, TextView.BufferType.SPANNABLE);
+        signupTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         nameLayout.setErrorEnabled(false);
         passwordLayout.setErrorEnabled(false);
-        String name = nameAutoCompleteTextView.getText().toString(),
+        final String name = nameAutoCompleteTextView.getText().toString(),
                 password = passwordEditText.getText().toString();
         if ("".equals(name))
             nameLayout.setError(getString(R.string.error_field_required));
         else if ("".equals(password))
             passwordLayout.setError(getString(R.string.error_field_required));
-        //else dataInterface.loginSchool(this, name, password);
+        else {
+            String uid = null;
+            for (Group school : schools)
+                if (school.name.equals(name)) {
+                    uid = school.getKey();
+                    break;
+                }
+            FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("pendingSchool")
+                    .setValue(new PendingSchool(uid, name, password));
+        }
     }
 
     @Override
@@ -141,5 +142,20 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
             return super.onOptionsItemSelected(item);
 
         return true;
+    }
+
+    private static class PendingSchool {
+        public String uid,
+                name,
+                password;
+
+        public PendingSchool() {
+        }
+
+        public PendingSchool(String uid, String name, String password) {
+            this.uid = uid;
+            this.name = name;
+            this.password = password;
+        }
     }
 }
