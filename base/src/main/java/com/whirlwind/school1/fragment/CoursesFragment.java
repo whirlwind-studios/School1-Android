@@ -167,9 +167,7 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
             Group group = new Group();
             group.setKey(dataSnapshot.getKey());
             userGroups.add(group);
-            adapter.notifyDataSetChanged();
-
-            Log.d("UserGroup", "added");
+            adapter.setUserGroups(userGroups);
         }
 
         @Override
@@ -184,7 +182,6 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
                     adapter.notifyDataSetChanged();
                     return;
                 }
-            Log.d("UserGroup", "removed");
         }
     }
 
@@ -195,38 +192,14 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
                     .child("groups")
                     .child(dataSnapshot.getKey())
                     .addValueEventListener(CoursesFragment.this);
-            /*Group group=dataSnapshot.getValue(Group.class);
-            if(group!=null && group.type==Group.TYPE_COURSE){
-                group.setKey(dataSnapshot.getKey());
-
-                groups.add(group);
-                adapter.notifyDataSetChanged();
-            }*/
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            /*Group group=dataSnapshot.getValue(Group.class);
-            if(group!=null){
-                group.setKey(dataSnapshot.getKey());
-
-                for(int i=0;i<groups.size();i++)
-                    if(groups.get(i).getKey().equals(dataSnapshot.getKey())){
-                        groups.set(i,group);
-                        adapter.notifyDataSetChanged();
-                        return;
-                    }
-            }*/
         }
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            /*for(int i=0;i<groups.size();i++)
-                if(groups.get(i).getKey().equals(dataSnapshot.getKey())){
-                    groups.remove(i);
-                    adapter.notifyDataSetChanged();
-                    return;
-                }*/
         }
     }
 }

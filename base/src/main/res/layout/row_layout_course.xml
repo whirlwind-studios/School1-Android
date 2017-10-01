@@ -38,4 +38,15 @@
         android:maxLines="1"
         android:textSize="14sp"
         tools:text="permission" />
+
+    <ImageView
+        android:id="@+id/row_layout_course_add"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="Add course"
+        android:padding="12dp"
+        android:src="@drawable/ic_add_black" />
+
 </RelativeLayout>
