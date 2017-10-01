@@ -7,7 +7,9 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
@@ -17,41 +19,67 @@ import java.util.List;
 
 public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.OnItemSelectedListener {
 
+    private final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private List<Group> courses = new ArrayList<>();
     private String groupId;
     private sharableListener sharableListener;
 
     public CourseSelectionAdapter() {
-        FirebaseDatabase.getInstance().getReference()
+        databaseReference.child("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("groups")
                 .addChildEventListener(new BackendHelper.ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Group group = dataSnapshot.getValue(Group.class);
-                        if (group != null && group.parentGroup != null) {
-                            courses.add(new Group(dataSnapshot.getKey()));
-                            notifyDataSetChanged();
-                            if (sharableListener != null)
-                                sharableListener.sharable(true);
+                        Boolean bool = dataSnapshot.getValue(Boolean.class);
+                        if (bool != null) {
+                            databaseReference
+                                    .child("groups")
+                                    .child(dataSnapshot.getKey())
+                                    .addValueEventListener(new BackendHelper.ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            Group course = dataSnapshot.getValue(Group.class);
+                                            if (course != null) {
+                                                course.setKey(dataSnapshot.getKey());
+                                                for (int i = 0; i < courses.size(); i++)
+                                                    if (courses.get(i).getKey().equals(course.getKey())) {
+                                                        courses.set(i, course);
+                                                        notifyDataSetChanged();
+                                                        return;
+                                                    }
+
+                                                // Not already included, just added
+                                                courses.add(course);
+                                                notifyDataSetChanged();
+                                                if (sharableListener != null)
+                                                    sharableListener.sharable(true);
+                                            }
+                                        }
+                                    });
                         }
                     }
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        onChildAdded(dataSnapshot, s);
+                        Boolean bool = dataSnapshot.getValue(Boolean.class);
+                        if (bool != null && bool)
+                            onChildAdded(dataSnapshot, s);
+                        else if (bool != null)
+                            onChildRemoved(dataSnapshot);
+
                     }
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        for (int i = 0; i < courses.size(); i++) {
+                        for (int i = 0; i < courses.size(); i++)
                             if (courses.get(i).getKey().equals(dataSnapshot.getKey())) {
                                 courses.remove(i);
                                 notifyDataSetChanged();
                                 if (courses.size() == 0 && sharableListener != null)
                                     sharableListener.sharable(false);
-                                break;
+                                return;
                             }
-                        }
                     }
 
                     @Override

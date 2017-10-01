@@ -15,6 +15,12 @@ public class BackendHelper {
         void setKey(String key);
     }
 
+    public interface ChildInterface {
+        String getParent();
+
+        void setParent(String uid);
+    }
+
     public static abstract class ValueEventListener implements com.google.firebase.database.ValueEventListener {
         @Override
         public void onCancelled(DatabaseError databaseError) {

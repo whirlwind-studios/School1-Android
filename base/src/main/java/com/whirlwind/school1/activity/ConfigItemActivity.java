@@ -190,6 +190,7 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     }
 
     private void done() {
+        // TODO: Change groupId
         String groupId = courseSelectionAdapter.getGroupId();
         if (!shareCheckBox.isChecked())
             groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();

@@ -14,7 +14,7 @@ import com.whirlwind.school1.popup.ItemPopup;
 import java.util.Calendar;
 
 @IgnoreExtraProperties
-public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
+public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, BackendHelper.ChildInterface {
 
     public static final int TASK = 0, APPOINTMENT = 1;
     public boolean shared;
@@ -24,6 +24,7 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
     public long date;
     // Metadata
     private String key;
+    private String parent;
 
     public Item() {
     }
@@ -101,5 +102,15 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable {
     @Override
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Override
+    public String getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 }

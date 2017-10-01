@@ -18,6 +18,7 @@ import com.whirlwind.school1.R;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
+import com.whirlwind.school1.popup.TextPopup;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -29,31 +30,8 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
     private static final int VIEW_TYPE_HEADER = 0, VIEW_TYPE_ITEM = 1;
 
     private final List<Object> rowItems = new ArrayList<>();
-    private ChildEventListener groupChangeListener = new BackendHelper.ChildEventListener() {
-
-        private final DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                .child("items");
-
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            reference.child(dataSnapshot.getKey()).
-                    addChildEventListener(DashboardAdapter.this);
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            reference.child(dataSnapshot.getKey())
-                    .removeEventListener(DashboardAdapter.this);
-        }
-
-        @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-        }
-    };
+    private final DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+            .child("items");
 
     public DashboardAdapter(Context context) {
         Calendar calendar = Calendar.getInstance();
@@ -88,16 +66,19 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         calendar.add(Calendar.WEEK_OF_YEAR, 1);
         rowItems.add(new Section("Until the end of the universe", getSectionDate(calendar)));
 
+        // TODO: Listen on login
         UserInfo userInfo = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("users")
-                .child(userInfo.getUid())
-                .child("groups")
-                .addChildEventListener(groupChangeListener);
+        if (userInfo != null) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+            reference.child("users")
+                    .child(userInfo.getUid())
+                    .child("groups")
+                    .addChildEventListener(this);
 
-        reference.child("items")
-                .child(userInfo.getUid())
-                .addChildEventListener(this);
+            reference.child("items")
+                    .child(userInfo.getUid())
+                    .addChildEventListener(new GroupItemsChangeListener(userInfo.getUid()));
+        }
     }
 
     private static long getSectionDate(Calendar calendar) {
@@ -106,49 +87,25 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        Item item = dataSnapshot.getValue(Item.class);
-        if (item != null) {
-            item.setKey(dataSnapshot.getKey());
-
-            for (int i = rowItems.size(); i > 0; i--) {
-                Object object = rowItems.get(i - 1);
-                if (object instanceof RowItem)
-                    if (item.getDate() >= ((RowItem) object).getDate()) {
-                        rowItems.add(i, item);
-                        break;
-                    }
-            }
-            notifyDataSetChanged();
-        }
+        reference.child(dataSnapshot.getKey()).
+                addChildEventListener(new GroupItemsChangeListener(dataSnapshot.getKey()));
     }
 
     @Override
     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        onChildRemoved(dataSnapshot);
-        onChildAdded(dataSnapshot, s);
     }
 
     @Override
     public void onChildRemoved(DataSnapshot dataSnapshot) {
-        String key = dataSnapshot.getKey();
-        for (int i = 0; i < rowItems.size(); i++) {
-            Object object = rowItems.get(i);
-            if (object instanceof BackendHelper.Queryable)
-                if (key.equals(((BackendHelper.Queryable) object).getKey())) {
-                    rowItems.remove(i);
-                    break;
-                }
-        }
-        notifyDataSetChanged();
     }
 
     @Override
     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-        notifyDataSetChanged();
     }
 
     @Override
     public void onCancelled(DatabaseError databaseError) {
+        new TextPopup(R.string.error_title, databaseError.getMessage()).show();
     }
 
     @Override
@@ -228,6 +185,59 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                 divider.setVisibility(View.GONE);
             else
                 divider.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class GroupItemsChangeListener extends BackendHelper.ChildEventListener {
+
+        private final String groupId;
+
+        public GroupItemsChangeListener(String groupId) {
+            this.groupId = groupId;
+        }
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            Item item = dataSnapshot.getValue(Item.class);
+            if (item != null) {
+                item.setKey(dataSnapshot.getKey());
+                item.setParent(groupId);
+
+                for (int i = rowItems.size(); i > 0; i--) {
+                    Object object = rowItems.get(i - 1);
+                    if (object instanceof RowItem)
+                        if (item.getDate() >= ((RowItem) object).getDate()) {
+                            rowItems.add(i, item);
+                            break;
+                        }
+                }
+                notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            onChildRemoved(dataSnapshot);
+            onChildAdded(dataSnapshot, s);
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            String key = dataSnapshot.getKey();
+            for (int i = 0; i < rowItems.size(); i++) {
+                Object object = rowItems.get(i);
+                if (object instanceof BackendHelper.Queryable)
+                    if (key.equals(((BackendHelper.Queryable) object).getKey())) {
+                        rowItems.remove(i);
+                        break;
+                    }
+            }
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            notifyDataSetChanged();
         }
     }
 }

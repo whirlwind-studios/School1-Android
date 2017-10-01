@@ -168,7 +168,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         // Use previous drawerItemId
         if (itemId == R.id.action_dashboard || itemId == R.id.action_ideas)
-            configuration.edit().putInt("drawerItemId", drawerItemId).apply();
+            configuration.edit().putInt("drawerItemId", itemId).apply();
         else if (itemId == R.id.action_share) {
             sendShareMessage();
             itemId = drawerItemId;

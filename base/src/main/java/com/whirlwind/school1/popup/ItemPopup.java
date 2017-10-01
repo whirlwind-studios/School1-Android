@@ -82,6 +82,7 @@ public class ItemPopup extends DialogPopup {
                             dismiss();
                             FirebaseDatabase.getInstance().getReference()
                                     .child("items")
+                                    .child(item.getParent())
                                     .child(item.getKey())
                                     .removeValue();
                         }
