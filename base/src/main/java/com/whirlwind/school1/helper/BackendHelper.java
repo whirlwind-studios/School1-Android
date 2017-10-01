@@ -1,5 +1,8 @@
 package com.whirlwind.school1.helper;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.popup.TextPopup;
@@ -29,6 +32,11 @@ public class BackendHelper {
     }
 
     public static abstract class ChildEventListener implements com.google.firebase.database.ChildEventListener {
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            Log.d("onChildMoved", "BackendHelper.ChildEventListener");
+        }
+
         @Override
         public void onCancelled(DatabaseError databaseError) {
             new TextPopup(R.string.error_title, databaseError.getMessage()).show();

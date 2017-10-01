@@ -81,10 +81,6 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
                                 return;
                             }
                     }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    }
                 });
     }
 

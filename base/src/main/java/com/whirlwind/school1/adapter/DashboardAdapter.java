@@ -101,6 +101,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     @Override
     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
     }
 
     @Override
@@ -232,11 +233,6 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                         break;
                     }
             }
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             notifyDataSetChanged();
         }
     }

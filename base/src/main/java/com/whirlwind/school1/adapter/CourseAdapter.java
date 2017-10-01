@@ -30,6 +30,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Group course = courses.get(position).t; // wrong type
@@ -38,6 +39,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
 
         //int resId = course. ? R.string.message_course_admin : R.string.message_course_participant;
         //holder.permission.setText(resId);
+        holder.permission.setText(course.description);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
