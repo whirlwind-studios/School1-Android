@@ -1,8 +1,10 @@
 package com.whirlwind.school1.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.whirlwind.school1.R;
+import com.whirlwind.school1.activity.ConfigCourseActivity;
+import com.whirlwind.school1.activity.MainActivity;
 import com.whirlwind.school1.adapter.CourseAdapter;
 import com.whirlwind.school1.adapter.FilterAdapter;
 import com.whirlwind.school1.helper.BackendHelper;
@@ -32,7 +36,7 @@ import com.whirlwind.school1.popup.TextPopup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoursesFragment extends Fragment implements SearchView.OnQueryTextListener, ValueEventListener {
+public class CoursesFragment extends Fragment implements SearchView.OnQueryTextListener, ValueEventListener, MainActivity.FloatingActionButtonHandler {
 
     // TODO: Orientation change
     private CourseAdapter adapter;
@@ -72,6 +76,16 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
     }
 
     @Override
+    public void handleFloatingActionButton(FloatingActionButton floatingActionButton) {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), ConfigCourseActivity.class));
+            }
+        });
+    }
+
+    @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         Group group = dataSnapshot.getValue(Group.class);
 
@@ -92,7 +106,7 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
             onQueryTextChange(lastQuery);
         }
         // deleted
-        else if (!dataSnapshot.exists()) {
+        else if (dataSnapshot.getValue() == null) {
             for (int i = 0; i < groups.size(); i++)
                 if (groups.get(i).equals(dataSnapshot.getKey())) {
                     groups.remove(i);

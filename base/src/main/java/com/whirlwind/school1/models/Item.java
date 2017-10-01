@@ -23,7 +23,7 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     public String subject, description;
     public long date;
     // Metadata
-    private String key;
+    protected String key;
     private String parent;
 
     public Item() {

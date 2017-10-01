@@ -13,7 +13,7 @@ public class Group implements BackendHelper.Queryable {
     public String iconLink;
     public String name, description;
     // Metadata
-    private String key;
+    protected String key;
 
     public Group() {
     }
