@@ -24,7 +24,7 @@ public class BackendHelper {
     public static abstract class ValueEventListener implements com.google.firebase.database.ValueEventListener {
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            new TextPopup(databaseError.getMessage(), databaseError.getDetails()).show();
+            new TextPopup(R.string.error_title, databaseError.getMessage()).show();
         }
     }
 

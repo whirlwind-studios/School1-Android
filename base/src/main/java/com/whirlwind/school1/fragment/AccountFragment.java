@@ -1,11 +1,9 @@
 package com.whirlwind.school1.fragment;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,7 +16,7 @@ public class AccountFragment extends PreferenceFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.account);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         //findPreference("userName").setSummary(sharedPreferences.getString("userName", "Add a user name"));
         //findPreference("schoolName").setSummary(sharedPreferences.getString("schoolName", "Add a school name"));

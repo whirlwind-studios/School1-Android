@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                     public void onClick(View view) {
                                         startActivity(new Intent(MainActivity.this, SchoolLoginActivity.class));
                                     }
-                                }).show();
+                                }).show(MainActivity.this);
                     else {
                         TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
                         school.setText(String.valueOf(dataSnapshot.getValue()));

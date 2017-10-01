@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.base.Popup;
 
@@ -48,8 +49,7 @@ public class SnackbarPopup extends Popup {
     public void build() {
         text = contentType == ContentType.string || contentType == ContentType.stringResId ? text : context.getString(resId);
         BaseActivity activity = (BaseActivity) context;
-        //View view = activity.findViewById(R.id.coordinator_layout);
-        View view = null;
+        View view = activity.findViewById(R.id.coordinator_layout);
         snackbar = Snackbar.make(view != null ? view : activity.findViewById(android.R.id.content), text, length);
 
         if (actionSet) {

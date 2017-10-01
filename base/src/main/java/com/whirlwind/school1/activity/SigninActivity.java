@@ -84,9 +84,9 @@ public class SigninActivity extends BaseActivity implements OnCompleteListener<A
                 new ConfirmationPopup(R.string.warning_title, R.string.warning_anonymous_auth, new Runnable() {
                     @Override
                     public void run() {
-                        auth.signInAnonymously();
+                        auth.signInAnonymously().addOnCompleteListener(SigninActivity.this, SigninActivity.this);
                     }
-                });
+                }).show(SigninActivity.this);
             }
         });
 
