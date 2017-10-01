@@ -42,6 +42,8 @@ import java.util.Random;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int RC_LOGIN_SCHOOL = 0;
+
     private static final int[] fragmentIds = {
             R.id.action_dashboard, R.id.action_ideas,
             R.id.action_account, R.id.action_courses, R.id.action_timetable,
@@ -69,7 +71,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (auth.getCurrentUser() == null)
             startActivity(new Intent(this, SigninActivity.class));
 
-        // TODO: If user doesn't have any courses, snackbar with link to courses fragment
         // TODO: Welcome task
 
         setContentView(R.layout.activity_main);
@@ -98,7 +99,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
             name.setText(auth.getCurrentUser().getDisplayName());
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                     .child("users")
                     .child(auth.getCurrentUser().getUid());
 
@@ -110,12 +111,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 .setAction("Open me", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        startActivity(new Intent(MainActivity.this, SchoolLoginActivity.class));
+                                        startActivityForResult(new Intent(MainActivity.this, SchoolLoginActivity.class), RC_LOGIN_SCHOOL);
                                     }
                                 }).show(MainActivity.this);
                     else {
                         TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
                         school.setText(String.valueOf(dataSnapshot.getValue()));
+                        reference.child("groups")
+                                .addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        // A school, but no groups
+                                        if (dataSnapshot.getChildrenCount() < 2)
+                                            new SnackbarPopup("You aren't logged into any courses", Snackbar.LENGTH_INDEFINITE, false)
+                                                    .setAction("Open me", new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            setFragment(R.id.action_courses, true);
+                                                        }
+                                                    }).show();
+                                    }
+                                });
                     }
                 }
             });
@@ -124,16 +140,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         int drawerItemId;
         if (savedInstanceState != null)
             drawerItemId = savedInstanceState.getInt("drawerItemId", R.id.action_dashboard);
-        else {
+        else
             drawerItemId = configuration.getInt("drawerItemId", R.id.action_dashboard);
-            navigationView.setCheckedItem(drawerItemId);
-        }
 
-        int position = getItemIndex(drawerItemId);
+        setFragment(drawerItemId, savedInstanceState == null);
+        /*int position = getItemIndex(drawerItemId);
         MenuItem item = navigationView.getMenu()
                 .findItem(fragmentIds[position]);
         onNavigationItemSelected(item);
         if (savedInstanceState == null)
+            updateFragment();*/
+    }
+
+    private void setFragment(int resId, boolean shouldUpdateFragment) {
+        navigationView.setCheckedItem(resId);
+
+        int position = getItemIndex(resId);
+        MenuItem item = navigationView.getMenu()
+                .findItem(fragmentIds[position]);
+        onNavigationItemSelected(item);
+
+        if (shouldUpdateFragment)
             updateFragment();
     }
 
@@ -253,6 +280,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     }
                 });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Logged in
+        if (requestCode == RC_LOGIN_SCHOOL && resultCode == 1)
+            new SnackbarPopup("You aren't logged into any courses", Snackbar.LENGTH_INDEFINITE, false)
+                    .setAction("Open me", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            setFragment(R.id.action_courses, true);
+                        }
+                    }).show();
     }
 
     public interface FloatingActionButtonHandler {

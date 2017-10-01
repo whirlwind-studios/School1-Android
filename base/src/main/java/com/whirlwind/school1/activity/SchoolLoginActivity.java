@@ -79,8 +79,10 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                 .addValueEventListener(new BackendHelper.ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue(String.class) != null)
+                        if (dataSnapshot.getValue(String.class) != null) {
+                            setResult(1);
                             finish();
+                        }
                     }
                 });
 
@@ -126,6 +128,7 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                     uid = school.getKey();
                     break;
                 }
+
             FirebaseDatabase.getInstance().getReference()
                     .child("users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -142,6 +145,12 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
             return super.onOptionsItemSelected(item);
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(0);
     }
 
     private static class PendingSchool {
