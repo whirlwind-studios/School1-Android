@@ -32,7 +32,7 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Boolean bool = dataSnapshot.getValue(Boolean.class);
-                        if (bool != null) {
+                        if (bool != null && bool) {
                             databaseReference
                                     .child("groups")
                                     .child(dataSnapshot.getKey())
