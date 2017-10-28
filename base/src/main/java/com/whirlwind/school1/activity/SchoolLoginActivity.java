@@ -21,6 +21,7 @@ import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
+import com.whirlwind.school1.models.PendingSchoolLogin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,8 +133,8 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
             FirebaseDatabase.getInstance().getReference()
                     .child("users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child("pendingSchool")
-                    .setValue(new PendingSchool(uid, name, password));
+                    .child("pendingSchoolLogin")
+                    .setValue(new PendingSchoolLogin(uid, name, password));
         }
     }
 
@@ -151,20 +152,5 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
     public void onBackPressed() {
         super.onBackPressed();
         setResult(0);
-    }
-
-    private static class PendingSchool {
-        public String uid,
-                name,
-                password;
-
-        public PendingSchool() {
-        }
-
-        public PendingSchool(String uid, String name, String password) {
-            this.uid = uid;
-            this.name = name;
-            this.password = password;
-        }
     }
 }

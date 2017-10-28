@@ -29,6 +29,6 @@
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
 # of your app.
--keepclassmembers class com.whirlwind.models.** {
+-keepclassmembers class com.whirlwind.school1.models.** {
   *;
 }

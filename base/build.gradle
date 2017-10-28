@@ -4,7 +4,7 @@ apply plugin: 'com.android.feature'
 android {
     baseFeature = true
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "$build_tools_version"
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 26
@@ -59,11 +59,11 @@ dependencies {
     compile "com.android.support:customtabs:$support_version"
     compile "com.android.support:support-vector-drawable:$support_version"
 
-    implementation "com.google.firebase:firebase-messaging:$google_version"
-    implementation "com.google.firebase:firebase-database:$google_version"
-    implementation "com.google.firebase:firebase-appindexing:$google_version"
     implementation "com.google.firebase:firebase-core:$google_version"
     implementation "com.google.firebase:firebase-auth:$google_version"
+    implementation "com.google.firebase:firebase-firestore:$google_version"
+    implementation "com.google.firebase:firebase-messaging:$google_version"
+    //implementation "com.google.firebase:firebase-database:$google_version"
 
     // Auth providers
     compile "com.google.android.gms:play-services-auth:$google_version"
