@@ -14,12 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
-import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.models.PendingSchoolLogin;
 
@@ -55,32 +58,29 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         }
 
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("schools")
-                .addValueEventListener(new BackendHelper.ValueEventListener() {
+        FirebaseFirestore.getInstance().collection("schools")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                         schools.clear();
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            Group school = child.getValue(Group.class);
-                            if (school != null) {
-                                school.setKey(child.getKey());
+                        for (DocumentSnapshot documentSnapshot : documentSnapshots.getDocuments()) {
+                            Group school = documentSnapshot.toObject(Group.class);
+                            school.setKey(documentSnapshot.getId());
                                 schools.add(school);
-                            }
                         }
 
                         nameAutoCompleteTextView.setAdapter(new ArrayAdapter<>(SchoolLoginActivity.this, android.R.layout.simple_list_item_1, schools));
                     }
                 });
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("school")
-                .addValueEventListener(new BackendHelper.ValueEventListener() {
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue(String.class) != null) {
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot != null && documentSnapshot.get("school") != null) {
                             setResult(1);
                             finish();
                         }
@@ -130,11 +130,10 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                     break;
                 }
 
-            FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child("pendingSchoolLogin")
-                    .setValue(new PendingSchoolLogin(uid, name, password));
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .update("pendingSchoolLogin", new PendingSchoolLogin(uid, name, password));
         }
     }
 
