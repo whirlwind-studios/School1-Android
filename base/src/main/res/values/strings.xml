@@ -2,6 +2,8 @@
     <string name="website_uri" translatable="false">http://com.whirlwind-studios.org</string>
     <string name="patreon_uri" translatable="false">https://www.patreon.com/school1</string>
     <string name="mail_uri" translatable="false">mailto:com.whirlwind.devstudios@gmail.com</string>
+    <string name="market_uri" translatable="false">market://details?id=com.whirlwind.school1</string>
+    <string name="play_store_uri" translatable="false">https://play.google.com/store/apps/details?id=com.whirlwind.school1</string>
 
     <string name="title_task_list">Tasks</string>
     <string name="title_appointment_list">Appointments</string>
@@ -25,6 +27,7 @@
     <string name="section_title_this_week">This week</string>
     <string name="section_title_next_week">Next week</string>
     <string name="section_title_remaining">Remaining</string>
+    <string name="sevtion_title_undefined">Until the end of the universe</string>
 
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
