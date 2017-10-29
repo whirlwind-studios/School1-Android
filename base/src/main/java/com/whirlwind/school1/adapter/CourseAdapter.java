@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.models.Group;
 
@@ -70,12 +70,12 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference()
-                        .child("users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child("groups")
-                        .child(course.getKey())
-                        .setValue(true);
+                FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .collection("groups")
+                        .document(course.getKey())
+                        .set(true);
             }
         });
     }
