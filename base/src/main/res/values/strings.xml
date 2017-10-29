@@ -108,6 +108,9 @@
     <string name="message_x_tasks_due">" tasks due tomorrow"</string>
     <string name="message_appointment_due">Appointment tomorrow</string>
     <string name="message_x_appointments_due">" appointments tomorrow"</string>
+    <string name="message_no_school">" Youre not logged into a school"</string>
+    <string name="message_no_courses">" You aren't logged into any courses"</string>
+    <string name="message_school_sign_up">" Sign up your school!"</string>
 
     <string name="popup_signin_queued">Signing in&#8230;</string>
     <string name="popup_signin_completed">Successfully signed in</string>
@@ -237,6 +240,7 @@
     <string name="error_api_version_outdated">School1 needs an update. New versions that require you to update usually introduce great new features or fix severe bugs</string>
     <string name="error_verification_issue">Verification issue</string>
     <string name="error_critical_error">An unknown critical error occurred. If this happens several times, please contact the developers</string>
+
 
     <string-array name="day_names">
         <item>@string/monday</item>
