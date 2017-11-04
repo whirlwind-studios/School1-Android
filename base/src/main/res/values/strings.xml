@@ -111,9 +111,10 @@
     <string name="message_x_tasks_due">" tasks due tomorrow"</string>
     <string name="message_appointment_due">Appointment tomorrow</string>
     <string name="message_x_appointments_due">" appointments tomorrow"</string>
-    <string name="message_no_school">" Youre not logged into a school"</string>
-    <string name="message_no_courses">" You aren't logged into any courses"</string>
-    <string name="message_school_sign_up">" Sign up your school!"</string>
+    <string name="message_no_school">"You're not logged into a school"</string>
+    <string name="message_no_courses">"You aren't logged into any courses"</string>
+    <string name="message_school_sign_up">Sign up your school!</string>
+    <string name="message_open_me">Open me!</string>
 
     <string name="popup_signin_queued">Signing in&#8230;</string>
     <string name="popup_signin_completed">Successfully signed in</string>
@@ -169,6 +170,7 @@
     <string name="error_field_required">Field is required</string>
     <string name="error_passwords_do_not_match">Passwords don\'t match</string>
 
+    <string name="info_title">Information</string>
     <string name="info_course_config">
         It seems like you don\'t have any courses selected yet.\n
         Just tap on the + Button and select the option you want:\n\n

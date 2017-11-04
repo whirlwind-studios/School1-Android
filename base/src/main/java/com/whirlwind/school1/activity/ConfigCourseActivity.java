@@ -54,7 +54,7 @@ public class ConfigCourseActivity extends BaseActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.get("schoolId") == null)
-                        new TextPopup(R.string.error_title, "Youre not logged into a school").show();
+                        new TextPopup(R.string.error_title, R.string.message_no_school).show();
                     else {
                         group.parentGroup = (String) documentSnapshot.get("schoolId");
 

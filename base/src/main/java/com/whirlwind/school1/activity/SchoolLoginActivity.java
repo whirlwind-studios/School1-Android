@@ -58,7 +58,9 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         }
 
 
-        FirebaseFirestore.getInstance().collection("schools")
+        FirebaseFirestore.getInstance()
+                .collection("groups")
+                .whereEqualTo("type", Group.TYPE_SCHOOL)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -100,14 +102,13 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
 
         findViewById(R.id.activity_school_login_button_login).setOnClickListener(this);
 
-        String signupText = "Sign up your School!";
-        SpannableString spannableString = new SpannableString(signupText);
+        SpannableString spannableString = new SpannableString(getString(R.string.message_school_sign_up));
         spannableString.setSpan(new URLSpan(""), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         signupTextView.setText(spannableString, TextView.BufferType.SPANNABLE);
         signupTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // TODO: Implement School signup activity
             }
         });
     }

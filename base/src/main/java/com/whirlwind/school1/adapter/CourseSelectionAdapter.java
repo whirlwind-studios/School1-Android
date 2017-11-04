@@ -19,79 +19,73 @@ import com.whirlwind.school1.models.Group;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.OnItemSelectedListener {
+public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.OnItemSelectedListener, EventListener<QuerySnapshot> {
 
     private List<Group> courses = new ArrayList<>();
     private String groupId;
     private sharableListener sharableListener;
 
     public CourseSelectionAdapter() {
-        FirebaseFirestore.getInstance().collection("users")
+        FirebaseFirestore.getInstance()
+                .collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("groups")
+                .whereGreaterThan("", Group.ACCESS_LEVEL_MEMBER)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (documentSnapshots == null)
-                            return;
 
-                        for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
-                            DocumentSnapshot snapshot = change.getDocument();
-
-                            DocumentChange.Type type = change.getType();
-                            switch (type) {
-                                case MODIFIED: {
-                                    Boolean bool = snapshot.toObject(Boolean.class);
-                                    if (bool)
-                                        type = DocumentChange.Type.ADDED;
-                                    else
-                                        type = DocumentChange.Type.REMOVED;
-                                }
-                                case ADDED: {
-                                    Boolean bool = snapshot.toObject(Boolean.class);
-                                    if (!bool)
-                                        return;
-
-                                    FirebaseFirestore.getInstance()
-                                            .collection("groups")
-                                            .document(snapshot.getId())
-                                            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                                                    Group course = documentSnapshot.toObject(Group.class);
-                                                    course.setId(documentSnapshot.getId());
-                                                    for (int i = 0; i < courses.size(); i++)
-                                                        if (courses.get(i).getId().equals(course.getId())) {
-                                                            courses.set(i, course);
-                                                            notifyDataSetChanged();
-                                                            return;
-                                                        }
-
-                                                    // Not already included, just added
-                                                    courses.add(course);
-                                                    notifyDataSetChanged();
-                                                    if (sharableListener != null)
-                                                        sharableListener.sharable(true);
-                                                }
-                                            });
-                                }
-                                break;
-
-                                case REMOVED: {
-                                    for (int i = 0; i < courses.size(); i++)
-                                        if (courses.get(i).getId().equals(change.getDocument().getId())) {
-                                            courses.remove(i);
-                                            notifyDataSetChanged();
-                                            if (courses.size() == 0 && sharableListener != null)
-                                                sharableListener.sharable(false);
-                                            return;
-                                        }
-                                }
-                                break;
-                            }
-                        }
                     }
                 });
+    }
+
+    @Override
+    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+        if (documentSnapshots == null)
+            return;
+
+        for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+            switch (change.getType()) {
+                case ADDED: {
+                    FirebaseFirestore.getInstance()
+                            .collection("groups")
+                            .document(change.getDocument().getId())
+                            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                                    Group course = documentSnapshot.toObject(Group.class);
+                                    course.setId(documentSnapshot.getId());
+                                    for (int i = 0; i < courses.size(); i++)
+                                        if (courses.get(i).getId().equals(course.getId())) {
+                                            courses.set(i, course);
+                                            notifyDataSetChanged();
+                                            return;
+                                        }
+
+                                    // Not already included, just added
+                                    courses.add(course);
+                                    notifyDataSetChanged();
+                                    if (sharableListener != null)
+                                        sharableListener.sharable(true);
+                                }
+                            });
+                }
+                break;
+
+                case REMOVED: {
+                    String id = change.getDocument().getId();
+                    for (int i = 0; i < courses.size(); i++)
+                        if (courses.get(i).getId().equals(id)) {
+                            courses.remove(i);
+                            notifyDataSetChanged();
+                            if (courses.size() == 0 && sharableListener != null)
+                                sharableListener.sharable(false);
+                            return;
+                        }
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -107,6 +101,7 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
+
 
     @Override
     public int getCount() {
@@ -132,6 +127,13 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
 
     public String getGroupId() {
         return groupId;
+    }
+
+    public int getItemPosition(String id) {
+        for (int i = 0; i < courses.size(); i++)
+            if (courses.get(i).getId().equals(id))
+                return i;
+        return 0;
     }
 
     public void setSharableListener(CourseSelectionAdapter.sharableListener sharableListener) {

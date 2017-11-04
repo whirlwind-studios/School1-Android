@@ -74,7 +74,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
             userReference.collection("groups")
                     .addSnapshotListener(this);
             userReference.collection("items")
-                    .addSnapshotListener(new GroupItemsChangeListener(null));
+                    .addSnapshotListener(new GroupItemsChangeListener(FirebaseAuth.getInstance().getCurrentUser().getUid()));
         }
     }
 
