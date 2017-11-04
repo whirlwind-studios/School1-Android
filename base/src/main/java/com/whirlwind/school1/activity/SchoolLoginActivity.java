@@ -100,7 +100,7 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
 
         findViewById(R.id.activity_school_login_button_login).setOnClickListener(this);
 
-        String signupText = "Blubblub please change me";
+        String signupText = "Sign up your School!";
         SpannableString spannableString = new SpannableString(signupText);
         spannableString.setSpan(new URLSpan(""), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         signupTextView.setText(spannableString, TextView.BufferType.SPANNABLE);
