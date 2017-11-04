@@ -23,11 +23,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.CourseSelectionAdapter;
 import com.whirlwind.school1.base.BaseActivity;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
 import com.whirlwind.school1.popup.DatePickerPopup;
@@ -49,16 +48,7 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
 
     private CourseSelectionAdapter courseSelectionAdapter = new CourseSelectionAdapter();
 
-    private static CollectionReference getItemsReference(String groupId) {
-        CollectionReference items;
-        if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(groupId))
-            items = FirebaseFirestore.getInstance()
-                    .collection("users");
-        else
-            items = FirebaseFirestore.getInstance()
-                    .collection("groups");
-        return items.document(groupId).collection("items");
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +75,13 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
                 subject.setText(args.getStringExtra("subject"));
                 description.setText(args.getStringExtra("description"));
                 date = args.getLongExtra("date", System.currentTimeMillis() / 1000);
-                shareCheckBox.setChecked(args.getStringExtra("groupId") != null);
+                shareCheckBox.setChecked(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(args.getStringExtra("groupId")));
                 courseSpinner.setSelection(courseSelectionAdapter.getItemPosition(args.getStringExtra("groupId")));
             }
         } else {
             date = savedInstanceState.getLong("date");
-            shareCheckBox.setChecked(args.getStringExtra("groupId") != null);
-            courseSpinner.setSelection(courseSelectionAdapter.getItemPosition(args.getStringExtra("groupId")));
+            shareCheckBox.setChecked(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(savedInstanceState.getString("groupId")));
+            courseSpinner.setSelection(courseSelectionAdapter.getItemPosition(savedInstanceState.getString("groupId")));
         }
 
         if (getSupportActionBar() != null) {
@@ -215,11 +205,11 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
             groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         if (getIntent().getBooleanExtra("isNew", true))
-            getItemsReference(groupId).add(item);
+            BackendHelper.getItemsReference(groupId).add(item);
         else {
             String id = getIntent().getStringExtra("id");
-            getItemsReference(getIntent().getStringExtra("groupId")).document(id).delete();
-            getItemsReference(groupId).document(id).set(item);
+            BackendHelper.getItemsReference(getIntent().getStringExtra("groupId")).document(id).delete();
+            BackendHelper.getItemsReference(groupId).document(id).set(item);
         }
         finish();
     }

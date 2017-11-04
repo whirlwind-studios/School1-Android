@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.activity.ConfigItemActivity;
 import com.whirlwind.school1.base.DialogPopup;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
 
@@ -80,8 +80,7 @@ public class ItemPopup extends DialogPopup {
                         @Override
                         public void run() {
                             dismiss();
-                            FirebaseFirestore.getInstance()
-                                    .collection("items")
+                            BackendHelper.getItemsReference(item.getParent())
                                     .document(item.getId())
                                     .delete();
                         }
