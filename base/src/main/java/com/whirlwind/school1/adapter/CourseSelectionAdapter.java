@@ -45,22 +45,40 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
                             .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                 @Override
                                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                                    if (!documentSnapshot.exists())
+                                        return;
+
                                     Group course = documentSnapshot.toObject(Group.class);
                                     course.setId(documentSnapshot.getId());
 
-                                    // New
-                                    for (int i = 0; i < courses.size(); i++)
-                                        if (courses.get(i).getId().equals(course.getId())) {
-                                            courses.set(i, course);
-                                            notifyDataSetChanged();
-                                            return;
-                                        }
-
-                                    // Not already included, just added
                                     courses.add(course);
                                     notifyDataSetChanged();
                                     if (sharableListener != null)
                                         sharableListener.sharable(true);
+                                }
+                            });
+                }
+                break;
+
+                case MODIFIED: {
+                    FirebaseFirestore.getInstance()
+                            .collection("groups")
+                            .document(change.getDocument().getId())
+                            .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                @Override
+                                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                                    if (!documentSnapshot.exists())
+                                        return;
+
+                                    Group course = documentSnapshot.toObject(Group.class);
+                                    course.setId(documentSnapshot.getId());
+
+                                    for (int i = 0; i < courses.size(); i++)
+                                        if (courses.get(i).getId().equals(course.getId())) {
+                                            courses.set(i, course);
+                                            notifyDataSetChanged();
+                                            break;
+                                        }
                                 }
                             });
                 }

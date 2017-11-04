@@ -171,6 +171,7 @@
     <string name="error_security_exception">Something prohibited School1 to connect to the internet. Find the reason and fix it!</string>
     <string name="error_field_required">Field is required</string>
     <string name="error_passwords_do_not_match">Passwords don\'t match</string>
+    <string name="error_no_school_with_name">No school has the name you typed in!</string>
 
     <string name="info_title">Information</string>
     <string name="info_course_config">

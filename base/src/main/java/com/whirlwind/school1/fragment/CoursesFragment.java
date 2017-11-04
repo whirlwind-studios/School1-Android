@@ -184,7 +184,7 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
 
                         FirebaseFirestore.getInstance()
                                 .collection("groups")
-                                .whereEqualTo("parentGroupId", change.getDocument().getId())
+                                .whereEqualTo("parentGroup", change.getDocument().getId())
                                 .addSnapshotListener(CoursesFragment.this);
                     }
                     break;

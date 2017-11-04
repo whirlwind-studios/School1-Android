@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -15,6 +14,9 @@ import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.popup.TextPopup;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigCourseActivity extends BaseActivity {
 
@@ -39,48 +41,43 @@ public class ConfigCourseActivity extends BaseActivity {
         if (item.getItemId() == android.R.id.home)
             onBackPressed();
         else if (item.getItemId() == R.id.action_done) {
-            TextView textView = findViewById(R.id.activity_config_course_name);
-            String name = textView.getText().toString();
-
-            final CollectionReference groupsReference = FirebaseFirestore.getInstance().collection("groups");
             final DocumentReference userReference = FirebaseFirestore.getInstance().collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            final Group group = new Group();
-            group.name = name;
-            group.type = Group.TYPE_COURSE;
 
             userReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.get("schoolId") == null)
+                    if (!documentSnapshot.exists())
+                        return;
+
+                    if (documentSnapshot.get("school.id") == null)
                         new TextPopup(R.string.error_title, R.string.message_no_school).show();
                     else {
-                        group.parentGroup = (String) documentSnapshot.get("schoolId");
+                        TextView textView = findViewById(R.id.activity_config_course_name);
+                        String name = textView.getText().toString();
 
-                        groupsReference.add(group)
+                        Group group = new Group();
+                        group.name = name;
+                        group.type = Group.TYPE_COURSE;
+                        group.parentGroup = documentSnapshot.getString("school.id");
+
+                        FirebaseFirestore.getInstance()
+                                .collection("groups")
+                                .add(group)
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
-                                        group.setId(documentReference.getId());
+
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("access_level", Group.ACCESS_LEVEL_CREATOR);
 
                                         userReference.collection("groups")
-                                                .document(group.getId())
-                                                .set(true)
+                                                .document(documentReference.getId())
+                                                .set(map)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        groupsReference
-                                                                .document(group.parentGroup)
-                                                                .collection("subGroups")
-                                                                .document(group.getId())
-                                                                .set(true)
-                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void aVoid) {
-                                                                        finish();
-                                                                    }
-                                                                });
+                                                        finish();
                                                     }
                                                 });
                                     }

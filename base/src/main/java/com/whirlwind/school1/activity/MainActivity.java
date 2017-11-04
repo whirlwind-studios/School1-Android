@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (!documentSnapshot.exists() || documentSnapshot.get("school") == null)
+                    if (!documentSnapshot.exists() || documentSnapshot.get("school.id") == null)
                         new SnackbarPopup(R.string.message_no_school, Snackbar.LENGTH_INDEFINITE, false)
                                 .setAction(R.string.message_open_me, new View.OnClickListener() {
                                     @Override
@@ -110,7 +110,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 }).show(MainActivity.this);
                     else {
                         TextView schoolTextView = headerView.findViewById(R.id.navigation_header_layout_school);
-                        schoolTextView.setText(documentSnapshot.getString("school/name"));
+                        schoolTextView.setText(documentSnapshot.getString("school.name"));
                         reference.collection("groups").get()
                                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override

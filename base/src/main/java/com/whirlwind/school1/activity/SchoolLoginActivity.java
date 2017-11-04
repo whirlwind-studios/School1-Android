@@ -15,20 +15,23 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.models.Group;
-import com.whirlwind.school1.models.PendingSchoolLogin;
+import com.whirlwind.school1.popup.TextPopup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SchoolLoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -78,11 +81,10 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists() && documentSnapshot.get("school") != null) {
+                    public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                        if (documentSnapshot.exists() && documentSnapshot.get("school.id") != null) {
                             setResult(1);
                             finish();
                         }
@@ -130,10 +132,34 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                     id = school.getId();
                     break;
                 }
+            if (id == null) {
+                new TextPopup(R.string.error_title, R.string.error_no_school_with_name).show(SchoolLoginActivity.this);
+                return;
+            }
 
-            FirebaseFirestore.getInstance()
+            Map<String, Object> mergeObject = new HashMap<>();
+            Map<String, Object> school = new HashMap<>();
+            school.put("id", id);
+            school.put("name", name);
+
+            mergeObject.put("school", school);
+
+            DocumentReference user = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            user.set(mergeObject, SetOptions.merge());
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("access_level", Group.ACCESS_LEVEL_MEMBER);
+
+            user.collection("groups")
+                    .document(id)
+                    .set(map);
+
+            /*FirebaseFirestore.getInstance()
                     .collection("pendingSchoolLogins")
-                    .add(new PendingSchoolLogin(id, password));
+                    .add(new PendingSchoolLogin(id, password));*/
         }
     }
 
