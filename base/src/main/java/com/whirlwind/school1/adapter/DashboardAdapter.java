@@ -9,29 +9,27 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
-import com.whirlwind.school1.popup.TextPopup;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.ViewHolder> implements ChildEventListener {
+public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.ViewHolder> implements EventListener<QuerySnapshot> {
 
     private static final int VIEW_TYPE_HEADER = 0, VIEW_TYPE_ITEM = 1;
 
     private final List<Object> rowItems = new ArrayList<>();
-    private final DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-            .child("items");
 
     public DashboardAdapter(Context context) {
         Calendar calendar = Calendar.getInstance();
@@ -69,15 +67,14 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         // TODO: Listen on login
         UserInfo userInfo = FirebaseAuth.getInstance().getCurrentUser();
         if (userInfo != null) {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            reference.child("users")
-                    .child(userInfo.getUid())
-                    .child("groups")
-                    .addChildEventListener(this);
+            DocumentReference userReference = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userInfo.getUid());
 
-            reference.child("items")
-                    .child(userInfo.getUid())
-                    .addChildEventListener(new GroupItemsChangeListener(userInfo.getUid()));
+            userReference.collection("groups")
+                    .addSnapshotListener(this);
+            userReference.collection("items")
+                    .addSnapshotListener(new GroupItemsChangeListener(null));
         }
     }
 
@@ -86,27 +83,20 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
     }
 
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        reference.child(dataSnapshot.getKey()).
-                addChildEventListener(new GroupItemsChangeListener(dataSnapshot.getKey()));
-    }
-
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-    }
-
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-    }
-
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError) {
-        new TextPopup(R.string.error_title, databaseError.getMessage()).show();
+    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+        for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+            switch (change.getType()) {
+                case ADDED: {
+                    String groupId = change.getDocument().toObject(String.class);
+                    FirebaseFirestore.getInstance()
+                            .collection("groups")
+                            .document(groupId)
+                            .collection("items")
+                            .addSnapshotListener(new GroupItemsChangeListener(groupId));
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -169,12 +159,12 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         }
 
         @Override
-        public String getKey() {
+        public String getId() {
             return null;
         }
 
         @Override
-        public void setKey(String key) {
+        public void setId(String id) {
         }
 
         @Override
@@ -189,46 +179,54 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         }
     }
 
-    private class GroupItemsChangeListener extends BackendHelper.ChildEventListener {
+    private class GroupItemsChangeListener implements EventListener<QuerySnapshot> {
 
         private final String groupId;
 
-        public GroupItemsChangeListener(String groupId) {
+        private GroupItemsChangeListener(String groupId) {
             this.groupId = groupId;
         }
 
         @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            Item item = dataSnapshot.getValue(Item.class);
-            if (item != null) {
-                item.setKey(dataSnapshot.getKey());
-                item.setParent(groupId);
-
-                for (int i = rowItems.size(); i > 0; i--) {
-                    Object object = rowItems.get(i - 1);
-                    if (object instanceof RowItem)
-                        if (item.getDate() >= ((RowItem) object).getDate()) {
-                            rowItems.add(i, item);
-                            break;
-                        }
+        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+            for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+                Item item = change.getDocument().toObject(Item.class);
+                item.setId(change.getDocument().getId());
+                switch (change.getType()) {
+                    case ADDED:
+                        onChildAdded(item);
+                        break;
+                    case MODIFIED:
+                        onChildRemoved(item);
+                        onChildAdded(item);
+                        break;
+                    case REMOVED:
+                        onChildRemoved(item);
+                        break;
                 }
-                notifyDataSetChanged();
             }
         }
 
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            onChildRemoved(dataSnapshot);
-            onChildAdded(dataSnapshot, s);
+        private void onChildAdded(Item item) {
+            item.setParent(groupId);
+
+            for (int i = rowItems.size(); i > 0; i--) {
+                Object object = rowItems.get(i - 1);
+                if (object instanceof RowItem)
+                    if (item.getDate() >= ((RowItem) object).getDate()) {
+                        rowItems.add(i, item);
+                        break;
+                    }
+            }
+            notifyDataSetChanged();
+
         }
 
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            String key = dataSnapshot.getKey();
+        private void onChildRemoved(Item item) {
             for (int i = 0; i < rowItems.size(); i++) {
                 Object object = rowItems.get(i);
                 if (object instanceof BackendHelper.Queryable)
-                    if (key.equals(((BackendHelper.Queryable) object).getKey())) {
+                    if (item.getId().equals(((BackendHelper.Queryable) object).getId())) {
                         rowItems.remove(i);
                         break;
                     }

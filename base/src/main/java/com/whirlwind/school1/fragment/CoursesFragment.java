@@ -19,24 +19,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.activity.ConfigCourseActivity;
 import com.whirlwind.school1.activity.MainActivity;
 import com.whirlwind.school1.adapter.CourseAdapter;
 import com.whirlwind.school1.adapter.FilterAdapter;
-import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
-import com.whirlwind.school1.popup.TextPopup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoursesFragment extends Fragment implements SearchView.OnQueryTextListener, ValueEventListener, MainActivity.FloatingActionButtonHandler {
+// Implements last stage query event listener
+public class CoursesFragment extends Fragment implements EventListener<QuerySnapshot>, SearchView.OnQueryTextListener, MainActivity.FloatingActionButtonHandler {
 
     // TODO: Orientation change
     private CourseAdapter adapter;
@@ -66,13 +65,51 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child("groups")
-                .addChildEventListener(new UserGroupListener());
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("groups")
+                .addSnapshotListener(new UserGroupListener());
 
         return recyclerView;
+    }
+
+    @Override
+    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+        for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+            switch (change.getType()) {
+                case ADDED: {
+                    Group group = change.getDocument().toObject(Group.class);
+                    group.setId(change.getDocument().getId());
+
+                    groups.add(group);
+                }
+                break;
+                case MODIFIED: {
+                    Group group = change.getDocument().toObject(Group.class);
+                    group.setId(change.getDocument().getId());
+
+                    for (int i = 0; i < groups.size(); i++) {
+                        if (group.getId().equals(groups.get(i).getId())) {
+                            groups.set(i, group);
+                            break;
+                        }
+                    }
+                }
+                break;
+                case REMOVED: {
+                    String id = change.getDocument().getId();
+                    for (int i = 0; i < groups.size(); i++)
+                        if (id.equals(groups.get(i).getId())) {
+                            groups.remove(i);
+                            break;
+                        }
+                }
+                break;
+            }
+        }
+
+        onQueryTextChange(lastQuery);
     }
 
     @Override
@@ -83,42 +120,6 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
                 startActivity(new Intent(getActivity(), ConfigCourseActivity.class));
             }
         });
-    }
-
-    @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-        Group group = dataSnapshot.getValue(Group.class);
-
-        // Valid value, added or changed
-        if (group != null) {
-            group.setKey(dataSnapshot.getKey());
-
-            // Changed
-            for (int i = 0; i < groups.size(); i++)
-                if (groups.get(i).getKey().equals(dataSnapshot.getKey())) {
-                    groups.set(i, group);
-                    onQueryTextChange(lastQuery);
-                    return;
-                }
-
-            // Added
-            groups.add(group);
-            onQueryTextChange(lastQuery);
-        }
-        // deleted
-        else if (dataSnapshot.getValue() == null) {
-            for (int i = 0; i < groups.size(); i++)
-                if (groups.get(i).equals(dataSnapshot.getKey())) {
-                    groups.remove(i);
-                    onQueryTextChange(lastQuery);
-                    return;
-                }
-        }
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError) {
-        new TextPopup(R.string.error_title, databaseError.getMessage()).show();
     }
 
     @Override
@@ -149,10 +150,10 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
 
         ArrayList<CourseAdapter.SortableCourse> filtered = new ArrayList<>(groups.size() / (newText.length() + 1));
         for (Group group : groups) {
-            int sortIndex = FilterAdapter.filter(newText, group.name, group.description);
+            int sortIndex = FilterAdapter.filter(newText, group.name);
             if (sortIndex != -1) {
                 for (Group userGroup : userGroups)
-                    if (userGroup.getKey().equals(group.getKey())) {
+                    if (userGroup.getId().equals(group.getId())) {
                         sortIndex += Integer.MAX_VALUE / 3;
                         break;
                     }
@@ -169,51 +170,35 @@ public class CoursesFragment extends Fragment implements SearchView.OnQueryTextL
         return false;
     }
 
-    private class UserGroupListener extends BackendHelper.ChildEventListener {
+    // First stage listener, adds a SubGroupListener for every group in users group collection
+    private class UserGroupListener implements EventListener<QuerySnapshot> {
         @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            FirebaseDatabase.getInstance().getReference()
-                    .child("groups")
-                    .child(dataSnapshot.getKey())
-                    .child("subGroups")
-                    .addChildEventListener(new SubGroupListener());
+        public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+            for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
+                switch (change.getType()) {
+                    case ADDED: {
+                        Group group = new Group();
+                        group.setId(change.getDocument().getId());
+                        userGroups.add(group);
+                        adapter.setUserGroups(userGroups);
 
-            Group group = new Group();
-            group.setKey(dataSnapshot.getKey());
-            userGroups.add(group);
-            adapter.setUserGroups(userGroups);
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            for (int i = 0; i < userGroups.size(); i++)
-                if (userGroups.get(i).getKey().equals(dataSnapshot.getKey())) {
-                    userGroups.remove(i);
-                    adapter.notifyDataSetChanged();
-                    return;
+                        FirebaseFirestore.getInstance()
+                                .collection("groups")
+                                .whereEqualTo("parentGroupId", change.getDocument().getId())
+                                .addSnapshotListener(CoursesFragment.this);
+                    }
+                    break;
+                    case REMOVED: {
+                        for (int i = 0; i < userGroups.size(); i++)
+                            if (userGroups.get(i).getId().equals(change.getDocument().getId())) {
+                                userGroups.remove(i);
+                                adapter.notifyDataSetChanged();
+                                return;
+                            }
+                    }
+                    break;
                 }
-        }
-    }
-
-    private class SubGroupListener extends BackendHelper.ChildEventListener {
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            FirebaseDatabase.getInstance().getReference()
-                    .child("groups")
-                    .child(dataSnapshot.getKey())
-                    .addValueEventListener(CoursesFragment.this);
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
         }
     }
 }

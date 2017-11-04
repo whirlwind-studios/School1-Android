@@ -7,12 +7,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
-import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.popup.TextPopup;
 
@@ -42,41 +42,39 @@ public class ConfigCourseActivity extends BaseActivity {
             TextView textView = findViewById(R.id.activity_config_course_name);
             String name = textView.getText().toString();
 
-
-            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-            final DatabaseReference userReference = reference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            final CollectionReference groupsReference = FirebaseFirestore.getInstance().collection("groups");
+            final DocumentReference userReference = FirebaseFirestore.getInstance().collection("users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             final Group group = new Group();
             group.name = name;
             group.type = Group.TYPE_COURSE;
 
-            userReference.child("schoolId").addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+            userReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue(String.class) == null)
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.get("schoolId") == null)
                         new TextPopup(R.string.error_title, "Youre not logged into a school").show();
                     else {
-                        group.parentGroup = dataSnapshot.getValue(String.class);
-                        String key = reference.child("groups")
-                                .push().getKey();
-                        group.setKey(key);
-                        reference.child("groups")
-                                .child(key)
-                                .setValue(group)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        group.parentGroup = (String) documentSnapshot.get("schoolId");
+
+                        groupsReference.add(group)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        userReference.child("groups")
-                                                .child(group.getKey())
-                                                .setValue(true)
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        group.setId(documentReference.getId());
+
+                                        userReference.collection("groups")
+                                                .document(group.getId())
+                                                .set(true)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        reference.child("groups")
-                                                                .child(group.parentGroup)
-                                                                .child("subGroups")
-                                                                .child(group.getKey())
-                                                                .setValue(true)
+                                                        groupsReference
+                                                                .document(group.parentGroup)
+                                                                .collection("subGroups")
+                                                                .document(group.getId())
+                                                                .set(true)
                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {

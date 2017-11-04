@@ -18,9 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.fragment.AboutFragment;
@@ -30,7 +32,6 @@ import com.whirlwind.school1.fragment.DashboardFragment;
 import com.whirlwind.school1.fragment.IdeasFragment;
 import com.whirlwind.school1.fragment.SettingsFragment;
 import com.whirlwind.school1.fragment.TimetableFragment;
-import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
 import com.whirlwind.school1.popup.SnackbarPopup;
@@ -99,14 +100,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
             name.setText(auth.getCurrentUser().getDisplayName());
 
-            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                    .child(auth.getCurrentUser().getUid());
+            final DocumentReference reference = FirebaseFirestore.getInstance().collection("users")
+                    .document(auth.getCurrentUser().getUid());
 
-            reference.child("school").addValueEventListener(new BackendHelper.ValueEventListener() {
+            reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() == null)
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot == null)
+                        return;
+
+                    String school = (String) documentSnapshot.get("school");
+                    new TextPopup("School", school).show();
+
+                    if (school == null)
                         new SnackbarPopup("You aren't logged in a schooool", Snackbar.LENGTH_INDEFINITE, false)
                                 .setAction("Open me", new View.OnClickListener() {
                                     @Override
@@ -115,14 +121,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                     }
                                 }).show(MainActivity.this);
                     else {
-                        TextView school = headerView.findViewById(R.id.navigation_header_layout_school);
-                        school.setText(String.valueOf(dataSnapshot.getValue()));
-                        reference.child("groups")
-                                .addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+                        TextView schoolTextView = headerView.findViewById(R.id.navigation_header_layout_school);
+                        schoolTextView.setText(String.valueOf(school));
+                        reference.collection("groups").get()
+                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        // A school, but no groups
-                                        if (dataSnapshot.getChildrenCount() < 2)
+                                    public void onSuccess(QuerySnapshot documentSnapshots) {
+                                        if (documentSnapshots.size() < 2)
                                             new SnackbarPopup("You aren't logged into any courses", Snackbar.LENGTH_INDEFINITE, false)
                                                     .setAction("Open me", new View.OnClickListener() {
                                                         @Override
@@ -130,6 +135,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                                             setFragment(R.id.action_courses, true);
                                                         }
                                                     }).show();
+
                                     }
                                 });
                     }
@@ -231,17 +237,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public void sendShareMessage() {
-        FirebaseDatabase.getInstance().getReference().child("items")
-                .addListenerForSingleValueEvent(new BackendHelper.ValueEventListener() {
+        FirebaseFirestore.getInstance().collection("items").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onSuccess(QuerySnapshot documentSnapshots) {
                         List<Item> tasks = new LinkedList<>(),
                                 appointments = new LinkedList<>();
 
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Item item = snapshot.getValue(Item.class);
-                            new TextPopup("Item", String.valueOf(snapshot.getValue())).show();
-                            if (item != null && item.shared) {
+
+                        for (DocumentSnapshot snapshot : documentSnapshots.getDocuments()) {
+                            Item item = snapshot.toObject(Item.class);
+                            new TextPopup("Item", String.valueOf(snapshot.getData().toString())).show();
+                            if (item.shared) {
                                 if (item.type == Item.TASK)
                                     tasks.add(item);
                                 else if (item.type == Item.APPOINTMENT)
@@ -279,7 +286,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 .putExtra(Intent.EXTRA_TEXT, builder.toString()), getString(R.string.action_share)));
                     }
                 });
-
     }
 
     @Override

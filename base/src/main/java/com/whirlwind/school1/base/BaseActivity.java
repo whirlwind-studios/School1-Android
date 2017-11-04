@@ -12,7 +12,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -24,7 +23,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     };
     protected FirebaseAuth auth = FirebaseAuth.getInstance();
-    protected FirebaseDatabase database = FirebaseDatabase.getInstance();
     protected SharedPreferences configuration;
 
     @Override

@@ -23,8 +23,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.CourseSelectionAdapter;
 import com.whirlwind.school1.base.BaseActivity;
@@ -190,20 +190,20 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     }
 
     private void done() {
-        // TODO: Change groupId
         String groupId = courseSelectionAdapter.getGroupId();
         if (!shareCheckBox.isChecked())
             groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference items = FirebaseDatabase.getInstance().getReference()
-                .child("items")
-                .child(groupId);
+        CollectionReference items = FirebaseFirestore.getInstance()
+                .collection("items");
 
         Item item = new Item(subject.getText().toString(), description.getText().toString(),
-                date, type, shareCheckBox.isChecked());
+                date, type);
+        item.setParent(groupId);
+
         if (getIntent().getBooleanExtra("isNew", true))
-            items.push().setValue(item);
+            items.add(item);
         else
-            items.child(getIntent().getStringExtra("uid")).setValue(item);
+            items.document(getIntent().getStringExtra("id")).set(item);
         finish();
     }
 }

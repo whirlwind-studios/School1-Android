@@ -1,45 +1,19 @@
 package com.whirlwind.school1.helper;
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.whirlwind.school1.R;
-import com.whirlwind.school1.popup.TextPopup;
-
 public class BackendHelper {
 
     // TODO: Proper user state monitoring
     // TODO: Remove listeners in onDestroy()'s
 
     public interface Queryable {
-        String getKey();
+        String getId();
 
-        void setKey(String key);
+        void setId(String id);
     }
 
     public interface ChildInterface {
         String getParent();
 
-        void setParent(String uid);
-    }
-
-    public static abstract class ValueEventListener implements com.google.firebase.database.ValueEventListener {
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            new TextPopup(R.string.error_title, databaseError.getMessage()).show();
-        }
-    }
-
-    public static abstract class ChildEventListener implements com.google.firebase.database.ChildEventListener {
-        @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            Log.d("onChildMoved", "BackendHelper.ChildEventListener");
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            new TextPopup(R.string.error_title, databaseError.getMessage()).show();
-        }
+        void setParent(String id);
     }
 }

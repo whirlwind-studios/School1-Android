@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.activity.ConfigItemActivity;
 import com.whirlwind.school1.base.DialogPopup;
@@ -70,9 +70,9 @@ public class ItemPopup extends DialogPopup {
                     dismiss();
 
                     context.startActivity(new Intent(context, ConfigItemActivity.class).putExtra("isNew", false)
-                            .putExtra("uid", item.getKey()).putExtra("subject", item.subject)
+                            .putExtra("id", item.getId()).putExtra("subject", item.subject)
                             .putExtra("description", item.description).putExtra("date", item.date)
-                            .putExtra("type", item.type).putExtra("shared", item.shared));
+                            .putExtra("type", item.type).putExtra("groupId", item.getParent()));
                     return true;
                 } else if (menuItem.getItemId() == R.id.action_delete) {
                     new ConfirmationPopup(
@@ -80,11 +80,10 @@ public class ItemPopup extends DialogPopup {
                         @Override
                         public void run() {
                             dismiss();
-                            FirebaseDatabase.getInstance().getReference()
-                                    .child("items")
-                                    .child(item.getParent())
-                                    .child(item.getKey())
-                                    .removeValue();
+                            FirebaseFirestore.getInstance()
+                                    .collection("items")
+                                    .document(item.getId())
+                                    .delete();
                         }
                     }).show();
                     return true;
