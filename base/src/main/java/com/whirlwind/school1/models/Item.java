@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.DashboardAdapter;
@@ -23,7 +24,9 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     public long date;
 
     // Metadata
+    @Exclude
     private String id;
+    @Exclude
     private String parent;
 
     public Item() {
@@ -94,21 +97,25 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     }
 
     @Override
+    @Exclude
     public String getId() {
         return id;
     }
 
     @Override
+    @Exclude
     public void setId(String id) {
         this.id = id;
     }
 
     @Override
+    @Exclude
     public String getParent() {
         return parent;
     }
 
     @Override
+    @Exclude
     public void setParent(String id) {
         this.parent = id;
     }

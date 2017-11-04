@@ -1,5 +1,6 @@
 package com.whirlwind.school1.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -21,16 +22,13 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.models.PendingSchoolLogin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SchoolLoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -55,7 +53,6 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         signupTextView = findViewById(R.id.activity_school_login_signup);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.title_account_school);
         }
@@ -111,7 +108,7 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         signupTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Implement School signup activity
+                startActivity(new Intent(SchoolLoginActivity.this, SchoolCreateActivity.class));
             }
         });
     }
@@ -127,20 +124,16 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         else if ("".equals(password))
             passwordLayout.setError(getString(R.string.error_field_required));
         else {
-            String uid = null;
+            String id = null;
             for (Group school : schools)
                 if (school.name.equals(name)) {
-                    uid = school.getId();
+                    id = school.getId();
                     break;
                 }
 
-            Map<String, Object> objectMap = new HashMap<>();
-            objectMap.put("pendingSchoolLogin", new PendingSchoolLogin(uid, password));
-
             FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .set(objectMap, SetOptions.merge());
+                    .collection("pendingSchoolLogins")
+                    .add(new PendingSchoolLogin(id, password));
         }
     }
 

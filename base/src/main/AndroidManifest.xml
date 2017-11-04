@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name="com.whirlwind.school1.Application"
+        android:name=".Application"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,18 +16,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name="com.whirlwind.school1.activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Drawer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -40,12 +40,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.whirlwind.school1.activity.ConfigItemActivity"
+            android:name=".activity.ConfigItemActivity"
             android:parentActivityName=".activity.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="com.whirlwind.school1.activity.SigninActivity"
+            android:name=".activity.SigninActivity"
             android:theme="@style/AppTheme.NoActionBar.Signin" />
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -65,14 +64,14 @@
         </activity>
 
         <service
-            android:name="com.whirlwind.school1.service.FirebaseNotificationService"
+            android:name=".service.FirebaseNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <activity android:name="com.whirlwind.school1.activity.LessonActivity">
+        <activity android:name=".activity.LessonActivity">
             <intent-filter android:order="1">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -85,7 +84,7 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity android:name="com.whirlwind.school1.activity.SchoolLoginActivity">
+        <activity android:name=".activity.SchoolLoginActivity">
             <intent-filter android:order="1">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -98,7 +97,7 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity android:name="com.whirlwind.school1.activity.ConfigCourseActivity">
+        <activity android:name=".activity.ConfigCourseActivity">
             <intent-filter android:order="1">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -107,9 +106,23 @@
 
                 <data
                     android:host="example.com"
+                    android:pathPattern="/.*"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.SchoolCreateActivity">
+            <intent-filter android:order="1">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="com.whirlwind"
                     android:pathPattern="/.*"
                     android:scheme="https" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

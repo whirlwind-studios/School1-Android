@@ -11,6 +11,7 @@
     <string name="title_lesson_list">Timetable</string>
     <string name="title_account_user">User</string>
     <string name="title_account_school">School</string>
+    <string name="title_school_signup">Sign up your school</string>
 
     <string name="title_signin_chooser">Chooser</string>
     <string name="title_signin_email">Email</string>
@@ -89,6 +90,7 @@
     <string name="hint_confirm_password_input">Confirm password</string>
     <string name="hint_course_name_config_input">Name of the course/class</string>
     <string name="hint_lesson_subject_config_input">Subject</string>
+    <string name="hint_school_password">"Your school's password"</string>
 
     <string name="message_course_participant">Course participant</string>
     <string name="message_course_admin">Course admin</string>

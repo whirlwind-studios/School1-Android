@@ -1,5 +1,6 @@
 package com.whirlwind.school1.models;
 
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.whirlwind.school1.helper.BackendHelper;
 
@@ -13,21 +14,17 @@ public class Group implements BackendHelper.Queryable {
     // Properties
     public String name;
     // Metadata
+    @Exclude
     protected String id;
 
-    public Group() {
-    }
-
-    public Group(String id) {
-        this.id = id;
-    }
-
     @Override
+    @Exclude
     public String getId() {
         return id;
     }
 
     @Override
+    @Exclude
     public void setId(String id) {
         this.id = id;
     }
