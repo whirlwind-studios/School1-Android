@@ -4,6 +4,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.DashboardAdapter;
 import com.whirlwind.school1.helper.BackendHelper;
@@ -12,6 +14,7 @@ import com.whirlwind.school1.popup.ItemPopup;
 
 import java.util.Calendar;
 
+@IgnoreExtraProperties
 public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, BackendHelper.ChildInterface {
 
     public static final int TASK = 0, APPOINTMENT = 1;
@@ -19,9 +22,12 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     public int type;
     public String subject, description;
     public long date;
+
     // Metadata
-    protected String id;
-    protected String parent;
+    @Exclude
+    private String id;
+    @Exclude
+    private String parent;
 
     public Item() {
     }
@@ -91,21 +97,25 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     }
 
     @Override
+    @Exclude
     public String getId() {
         return id;
     }
 
     @Override
+    @Exclude
     public void setId(String id) {
         this.id = id;
     }
 
     @Override
+    @Exclude
     public String getParent() {
         return parent;
     }
 
     @Override
+    @Exclude
     public void setParent(String id) {
         this.parent = id;
     }

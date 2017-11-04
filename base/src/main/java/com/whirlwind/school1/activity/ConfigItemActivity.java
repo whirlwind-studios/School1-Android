@@ -23,11 +23,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.adapter.CourseSelectionAdapter;
 import com.whirlwind.school1.base.BaseActivity;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.helper.DateHelper;
 import com.whirlwind.school1.models.Item;
 import com.whirlwind.school1.popup.DatePickerPopup;
@@ -48,6 +47,8 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     private int type = Item.TASK;
 
     private CourseSelectionAdapter courseSelectionAdapter = new CourseSelectionAdapter();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +75,13 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
                 subject.setText(args.getStringExtra("subject"));
                 description.setText(args.getStringExtra("description"));
                 date = args.getLongExtra("date", System.currentTimeMillis() / 1000);
-                shareCheckBox.setChecked(args.getBooleanExtra("shared", false));
+                shareCheckBox.setChecked(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(args.getStringExtra("groupId")));
+                courseSpinner.setSelection(courseSelectionAdapter.getItemPosition(args.getStringExtra("groupId")));
             }
         } else {
             date = savedInstanceState.getLong("date");
-            shareCheckBox.setChecked(savedInstanceState.getBoolean("shared"));
+            shareCheckBox.setChecked(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(savedInstanceState.getString("groupId")));
+            courseSpinner.setSelection(courseSelectionAdapter.getItemPosition(savedInstanceState.getString("groupId")));
         }
 
         if (getSupportActionBar() != null) {
@@ -184,26 +187,30 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("shared", shareCheckBox.isChecked());
+        outState.putString("groupId", shareCheckBox.isChecked() ? courseSelectionAdapter.getGroupId() : null);
         outState.putInt("type", type);
         outState.putLong("date", date);
     }
 
     private void done() {
-        String groupId = courseSelectionAdapter.getGroupId();
-        if (!shareCheckBox.isChecked())
-            groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        CollectionReference items = FirebaseFirestore.getInstance()
-                .collection("items");
+        if (FirebaseAuth.getInstance().getCurrentUser() == null)
+            return;
 
         Item item = new Item(subject.getText().toString(), description.getText().toString(),
                 date, type);
-        item.setParent(groupId);
+
+        String groupId = courseSelectionAdapter.getGroupId();
+
+        if (!shareCheckBox.isChecked())
+            groupId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         if (getIntent().getBooleanExtra("isNew", true))
-            items.add(item);
-        else
-            items.document(getIntent().getStringExtra("id")).set(item);
+            BackendHelper.getItemsReference(groupId).add(item);
+        else {
+            String id = getIntent().getStringExtra("id");
+            BackendHelper.getItemsReference(getIntent().getStringExtra("groupId")).document(id).delete();
+            BackendHelper.getItemsReference(groupId).document(id).set(item);
+        }
         finish();
     }
 }

@@ -1,5 +1,6 @@
 package com.whirlwind.school1.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -14,20 +15,23 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.models.Group;
-import com.whirlwind.school1.models.PendingSchoolLogin;
+import com.whirlwind.school1.popup.TextPopup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SchoolLoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -52,13 +56,14 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         signupTextView = findViewById(R.id.activity_school_login_signup);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.title_account_school);
         }
 
 
-        FirebaseFirestore.getInstance().collection("schools")
+        FirebaseFirestore.getInstance()
+                .collection("groups")
+                .whereEqualTo("type", Group.TYPE_SCHOOL)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -76,11 +81,10 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot != null && documentSnapshot.get("school") != null) {
+                    public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                        if (documentSnapshot.exists() && documentSnapshot.get("school.id") != null) {
                             setResult(1);
                             finish();
                         }
@@ -100,14 +104,13 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
 
         findViewById(R.id.activity_school_login_button_login).setOnClickListener(this);
 
-        String signupText = "Sign up your School!";
-        SpannableString spannableString = new SpannableString(signupText);
+        SpannableString spannableString = new SpannableString(getString(R.string.message_school_sign_up));
         spannableString.setSpan(new URLSpan(""), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         signupTextView.setText(spannableString, TextView.BufferType.SPANNABLE);
         signupTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(SchoolLoginActivity.this, SchoolCreateActivity.class));
             }
         });
     }
@@ -123,17 +126,40 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         else if ("".equals(password))
             passwordLayout.setError(getString(R.string.error_field_required));
         else {
-            String uid = null;
+            String id = null;
             for (Group school : schools)
                 if (school.name.equals(name)) {
-                    uid = school.getId();
+                    id = school.getId();
                     break;
                 }
+            if (id == null) {
+                new TextPopup(R.string.error_title, R.string.error_no_school_with_name).show(SchoolLoginActivity.this);
+                return;
+            }
 
-            FirebaseFirestore.getInstance()
+            Map<String, Object> mergeObject = new HashMap<>();
+            Map<String, Object> school = new HashMap<>();
+            school.put("id", id);
+            school.put("name", name);
+
+            mergeObject.put("school", school);
+
+            DocumentReference user = FirebaseFirestore.getInstance()
                     .collection("users")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .update("pendingSchoolLogin", new PendingSchoolLogin(uid, password));
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            user.set(mergeObject, SetOptions.merge());
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("access_level", Group.ACCESS_LEVEL_MEMBER);
+
+            user.collection("groups")
+                    .document(id)
+                    .set(map);
+
+            /*FirebaseFirestore.getInstance()
+                    .collection("pendingSchoolLogins")
+                    .add(new PendingSchoolLogin(id, password));*/
         }
     }
 

@@ -74,7 +74,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
             userReference.collection("groups")
                     .addSnapshotListener(this);
             userReference.collection("items")
-                    .addSnapshotListener(new GroupItemsChangeListener(null));
+                    .addSnapshotListener(new GroupItemsChangeListener(FirebaseAuth.getInstance().getCurrentUser().getUid()));
         }
     }
 
@@ -87,7 +87,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
             switch (change.getType()) {
                 case ADDED: {
-                    String groupId = change.getDocument().toObject(String.class);
+                    String groupId = change.getDocument().getId();
                     FirebaseFirestore.getInstance()
                             .collection("groups")
                             .document(groupId)

@@ -75,7 +75,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .collection("groups")
                         .document(course.getId())
-                        .set(true);
+                        .set(Group.ACCESS_LEVEL_MEMBER);
             }
         });
     }

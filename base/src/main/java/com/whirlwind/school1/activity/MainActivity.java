@@ -32,14 +32,8 @@ import com.whirlwind.school1.fragment.DashboardFragment;
 import com.whirlwind.school1.fragment.IdeasFragment;
 import com.whirlwind.school1.fragment.SettingsFragment;
 import com.whirlwind.school1.fragment.TimetableFragment;
-import com.whirlwind.school1.helper.DateHelper;
-import com.whirlwind.school1.models.Item;
 import com.whirlwind.school1.popup.SnackbarPopup;
 import com.whirlwind.school1.popup.TextPopup;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -106,15 +100,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot == null)
-                        return;
-
-                    String school = (String) documentSnapshot.get("school");
-                    new TextPopup("School", school).show();
-
-                    if (school == null)
-                        new SnackbarPopup("You aren't logged in a schooool", Snackbar.LENGTH_INDEFINITE, false)
-                                .setAction("Open me", new View.OnClickListener() {
+                    if (!documentSnapshot.exists() || documentSnapshot.get("school.id") == null)
+                        new SnackbarPopup(R.string.message_no_school, Snackbar.LENGTH_INDEFINITE, false)
+                                .setAction(R.string.message_open_me, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         startActivityForResult(new Intent(MainActivity.this, SchoolLoginActivity.class), RC_LOGIN_SCHOOL);
@@ -122,14 +110,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 }).show(MainActivity.this);
                     else {
                         TextView schoolTextView = headerView.findViewById(R.id.navigation_header_layout_school);
-                        schoolTextView.setText(String.valueOf(school));
+                        schoolTextView.setText(documentSnapshot.getString("school.name"));
                         reference.collection("groups").get()
                                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot documentSnapshots) {
                                         if (documentSnapshots.size() < 2)
-                                            new SnackbarPopup("You aren't logged into any courses", Snackbar.LENGTH_INDEFINITE, false)
-                                                    .setAction("Open me", new View.OnClickListener() {
+                                            new SnackbarPopup(R.string.message_no_courses, Snackbar.LENGTH_INDEFINITE, false)
+                                                    .setAction(R.string.message_open_me, new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
                                                             setFragment(R.id.action_courses, true);
@@ -150,12 +138,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawerItemId = configuration.getInt("drawerItemId", R.id.action_dashboard);
 
         setFragment(drawerItemId, savedInstanceState == null);
-        /*int position = getItemIndex(drawerItemId);
-        MenuItem item = navigationView.getMenu()
-                .findItem(fragmentIds[position]);
-        onNavigationItemSelected(item);
-        if (savedInstanceState == null)
-            updateFragment();*/
     }
 
     private void setFragment(int resId, boolean shouldUpdateFragment) {
@@ -237,7 +219,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public void sendShareMessage() {
-        FirebaseFirestore.getInstance().collection("items").get()
+        new TextPopup(R.string.info_title, R.string.info_feature_not_supported);
+        /*FirebaseFirestore.getInstance().collection("items").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot documentSnapshots) {
@@ -285,7 +268,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
                                 .putExtra(Intent.EXTRA_TEXT, builder.toString()), getString(R.string.action_share)));
                     }
-                });
+                });*/
     }
 
     @Override
@@ -294,8 +277,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         // Logged in
         if (requestCode == RC_LOGIN_SCHOOL && resultCode == 1)
-            new SnackbarPopup("You aren't logged into any courses", Snackbar.LENGTH_INDEFINITE, false)
-                    .setAction("Open me", new View.OnClickListener() {
+            new SnackbarPopup(R.string.message_no_courses, Snackbar.LENGTH_INDEFINITE, false)
+                    .setAction(R.string.message_open_me, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             setFragment(R.id.action_courses, true);

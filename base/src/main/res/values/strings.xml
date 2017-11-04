@@ -11,6 +11,7 @@
     <string name="title_lesson_list">Timetable</string>
     <string name="title_account_user">User</string>
     <string name="title_account_school">School</string>
+    <string name="title_school_signup">Sign up your school</string>
 
     <string name="title_signin_chooser">Chooser</string>
     <string name="title_signin_email">Email</string>
@@ -89,6 +90,7 @@
     <string name="hint_confirm_password_input">Confirm password</string>
     <string name="hint_course_name_config_input">Name of the course/class</string>
     <string name="hint_lesson_subject_config_input">Subject</string>
+    <string name="hint_school_password">"Your school's password"</string>
 
     <string name="message_course_participant">Course participant</string>
     <string name="message_course_admin">Course admin</string>
@@ -111,9 +113,10 @@
     <string name="message_x_tasks_due">" tasks due tomorrow"</string>
     <string name="message_appointment_due">Appointment tomorrow</string>
     <string name="message_x_appointments_due">" appointments tomorrow"</string>
-    <string name="message_no_school">" Youre not logged into a school"</string>
-    <string name="message_no_courses">" You aren't logged into any courses"</string>
-    <string name="message_school_sign_up">" Sign up your school!"</string>
+    <string name="message_no_school">"You're not logged into a school"</string>
+    <string name="message_no_courses">"You aren't logged into any courses"</string>
+    <string name="message_school_sign_up">Sign up your school!</string>
+    <string name="message_open_me">Open me!</string>
 
     <string name="popup_signin_queued">Signing in&#8230;</string>
     <string name="popup_signin_completed">Successfully signed in</string>
@@ -168,7 +171,9 @@
     <string name="error_security_exception">Something prohibited School1 to connect to the internet. Find the reason and fix it!</string>
     <string name="error_field_required">Field is required</string>
     <string name="error_passwords_do_not_match">Passwords don\'t match</string>
+    <string name="error_no_school_with_name">No school has the name you typed in!</string>
 
+    <string name="info_title">Information</string>
     <string name="info_course_config">
         It seems like you don\'t have any courses selected yet.\n
         Just tap on the + Button and select the option you want:\n\n
