@@ -50,7 +50,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         //int resId = course. ? R.string.message_course_admin : R.string.message_course_participant;
         //holder.permission.setText(resId);
         // TODO: definitely needs some refactoring...
-        holder.permission.setText(course.description);
+        //holder.permission.setText(course.description);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +60,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         });
 
         for (Group userGroup : userGroups)
-            if (userGroup.getKey().equals(course.getKey())) {
+            if (userGroup.getId().equals(course.getId())) {
 
                 holder.add.setVisibility(View.GONE);
                 return;
@@ -74,7 +74,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
                         .collection("users")
                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .collection("groups")
-                        .document(course.getKey())
+                        .document(course.getId())
                         .set(true);
             }
         });

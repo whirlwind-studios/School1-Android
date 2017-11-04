@@ -159,12 +159,12 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         }
 
         @Override
-        public String getKey() {
+        public String getId() {
             return null;
         }
 
         @Override
-        public void setKey(String key) {
+        public void setId(String id) {
         }
 
         @Override
@@ -191,7 +191,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
             for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
                 Item item = change.getDocument().toObject(Item.class);
-                item.setKey(change.getDocument().getId());
+                item.setId(change.getDocument().getId());
                 switch (change.getType()) {
                     case ADDED:
                         onChildAdded(item);
@@ -226,7 +226,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
             for (int i = 0; i < rowItems.size(); i++) {
                 Object object = rowItems.get(i);
                 if (object instanceof BackendHelper.Queryable)
-                    if (item.getKey().equals(((BackendHelper.Queryable) object).getKey())) {
+                    if (item.getId().equals(((BackendHelper.Queryable) object).getId())) {
                         rowItems.remove(i);
                         break;
                     }

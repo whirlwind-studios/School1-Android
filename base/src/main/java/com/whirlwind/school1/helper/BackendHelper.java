@@ -6,14 +6,14 @@ public class BackendHelper {
     // TODO: Remove listeners in onDestroy()'s
 
     public interface Queryable {
-        String getKey();
+        String getId();
 
-        void setKey(String key);
+        void setId(String id);
     }
 
     public interface ChildInterface {
         String getParent();
 
-        void setParent(String uid);
+        void setParent(String id);
     }
 }

@@ -59,9 +59,9 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
                                                 @Override
                                                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                                                     Group course = documentSnapshot.toObject(Group.class);
-                                                    course.setKey(documentSnapshot.getId());
+                                                    course.setId(documentSnapshot.getId());
                                                     for (int i = 0; i < courses.size(); i++)
-                                                        if (courses.get(i).getKey().equals(course.getKey())) {
+                                                        if (courses.get(i).getId().equals(course.getId())) {
                                                             courses.set(i, course);
                                                             notifyDataSetChanged();
                                                             return;
@@ -79,7 +79,7 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
 
                                 case REMOVED: {
                                     for (int i = 0; i < courses.size(); i++)
-                                        if (courses.get(i).getKey().equals(change.getDocument().getId())) {
+                                        if (courses.get(i).getId().equals(change.getDocument().getId())) {
                                             courses.remove(i);
                                             notifyDataSetChanged();
                                             if (courses.size() == 0 && sharableListener != null)
@@ -96,12 +96,12 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
 
     @Override
     public long getItemId(int i) {
-        return courses.get(i).getKey().hashCode();
+        return courses.get(i).getId().hashCode();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        groupId = courses.get(position).getKey();
+        groupId = courses.get(position).getId();
     }
 
     @Override

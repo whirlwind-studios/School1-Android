@@ -8,26 +8,25 @@ public class Group implements BackendHelper.Queryable {
     public int type;
     public String parentGroup; // null for schools, uid of parent for every other type
     // Properties
-    public String iconLink;
-    public String name, description;
+    public String name;
     // Metadata
-    protected String key;
+    protected String id;
 
     public Group() {
     }
 
-    public Group(String key) {
-        this.key = key;
+    public Group(String id) {
+        this.id = id;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getId() {
+        return id;
     }
 
     @Override
-    public void setKey(String key) {
-        this.key = key;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

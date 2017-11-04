@@ -65,7 +65,7 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                         schools.clear();
                         for (DocumentSnapshot documentSnapshot : documentSnapshots.getDocuments()) {
                             Group school = documentSnapshot.toObject(Group.class);
-                            school.setKey(documentSnapshot.getId());
+                            school.setId(documentSnapshot.getId());
                                 schools.add(school);
                         }
 
@@ -126,14 +126,14 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
             String uid = null;
             for (Group school : schools)
                 if (school.name.equals(name)) {
-                    uid = school.getKey();
+                    uid = school.getId();
                     break;
                 }
 
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .update("pendingSchoolLogin", new PendingSchoolLogin(uid, name, password));
+                    .update("pendingSchoolLogin", new PendingSchoolLogin(uid, password));
         }
     }
 

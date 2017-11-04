@@ -80,17 +80,17 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
             switch (change.getType()) {
                 case ADDED: {
                     Group group = change.getDocument().toObject(Group.class);
-                    group.setKey(change.getDocument().getId());
+                    group.setId(change.getDocument().getId());
 
                     groups.add(group);
                 }
                 break;
                 case MODIFIED: {
                     Group group = change.getDocument().toObject(Group.class);
-                    group.setKey(change.getDocument().getId());
+                    group.setId(change.getDocument().getId());
 
                     for (int i = 0; i < groups.size(); i++) {
-                        if (group.getKey().equals(groups.get(i).getKey())) {
+                        if (group.getId().equals(groups.get(i).getId())) {
                             groups.set(i, group);
                             break;
                         }
@@ -100,7 +100,7 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
                 case REMOVED: {
                     String id = change.getDocument().getId();
                     for (int i = 0; i < groups.size(); i++)
-                        if (id.equals(groups.get(i).getKey())) {
+                        if (id.equals(groups.get(i).getId())) {
                             groups.remove(i);
                             break;
                         }
@@ -150,10 +150,10 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
 
         ArrayList<CourseAdapter.SortableCourse> filtered = new ArrayList<>(groups.size() / (newText.length() + 1));
         for (Group group : groups) {
-            int sortIndex = FilterAdapter.filter(newText, group.name, group.description);
+            int sortIndex = FilterAdapter.filter(newText, group.name);
             if (sortIndex != -1) {
                 for (Group userGroup : userGroups)
-                    if (userGroup.getKey().equals(group.getKey())) {
+                    if (userGroup.getId().equals(group.getId())) {
                         sortIndex += Integer.MAX_VALUE / 3;
                         break;
                     }
@@ -178,7 +178,7 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
                 switch (change.getType()) {
                     case ADDED: {
                         Group group = new Group();
-                        group.setKey(change.getDocument().getId());
+                        group.setId(change.getDocument().getId());
                         userGroups.add(group);
                         adapter.setUserGroups(userGroups);
 
@@ -190,7 +190,7 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
                     break;
                     case REMOVED: {
                         for (int i = 0; i < userGroups.size(); i++)
-                            if (userGroups.get(i).getKey().equals(change.getDocument().getId())) {
+                            if (userGroups.get(i).getId().equals(change.getDocument().getId())) {
                                 userGroups.remove(i);
                                 adapter.notifyDataSetChanged();
                                 return;

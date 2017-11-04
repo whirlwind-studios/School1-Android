@@ -62,10 +62,10 @@ public class ConfigCourseActivity extends BaseActivity {
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
-                                        group.setKey(documentReference.getId());
+                                        group.setId(documentReference.getId());
 
                                         userReference.collection("groups")
-                                                .document(group.getKey())
+                                                .document(group.getId())
                                                 .set(true)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -73,7 +73,7 @@ public class ConfigCourseActivity extends BaseActivity {
                                                         groupsReference
                                                                 .document(group.parentGroup)
                                                                 .collection("subGroups")
-                                                                .document(group.getKey())
+                                                                .document(group.getId())
                                                                 .set(true)
                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override

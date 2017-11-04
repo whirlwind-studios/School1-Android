@@ -15,14 +15,13 @@ import java.util.Calendar;
 public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, BackendHelper.ChildInterface {
 
     public static final int TASK = 0, APPOINTMENT = 1;
-    public boolean shared;
     // Properties
     public int type;
     public String subject, description;
     public long date;
-    public String parent;
     // Metadata
-    protected String key;
+    protected String id;
+    protected String parent;
 
     public Item() {
     }
@@ -33,12 +32,11 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
         this.date = date;
     }
 
-    public Item(String subject, String description, long date, int type, boolean shared) {
+    public Item(String subject, String description, long date, int type) {
         this.subject = subject;
         this.description = description;
         this.date = date;
         this.type = type;
-        this.shared = shared;
     }
 
     private static boolean displayDate(long date) {
@@ -63,7 +61,7 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
             itemSubject.setBackgroundResource(R.drawable.circle_subject_task); // Task/ appointment
         else
             itemSubject.setBackgroundResource(R.drawable.circle_subject_appointment);
-        itemSubject.setEnabled(!shared); // private/shared indicator
+        itemSubject.setEnabled(parent == null); // private/shared indicator
 
         itemDescription.setText(description);
 
@@ -93,13 +91,13 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public String getId() {
+        return id;
     }
 
     @Override
-    public void setKey(String key) {
-        this.key = key;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -108,7 +106,7 @@ public class Item implements DashboardAdapter.RowItem, BackendHelper.Queryable, 
     }
 
     @Override
-    public void setParent(String parent) {
-        this.parent = parent;
+    public void setParent(String id) {
+        this.parent = id;
     }
 }

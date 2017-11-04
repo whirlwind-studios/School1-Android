@@ -197,13 +197,13 @@ public class ConfigItemActivity extends BaseActivity implements CompoundButton.O
                 .collection("items");
 
         Item item = new Item(subject.getText().toString(), description.getText().toString(),
-                date, type, shareCheckBox.isChecked());
+                date, type);
         item.setParent(groupId);
 
         if (getIntent().getBooleanExtra("isNew", true))
             items.add(item);
         else
-            items.document(getIntent().getStringExtra("uid")).set(item);
+            items.document(getIntent().getStringExtra("id")).set(item);
         finish();
     }
 }
