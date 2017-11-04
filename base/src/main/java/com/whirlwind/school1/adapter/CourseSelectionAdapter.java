@@ -30,20 +30,12 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
                 .collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("groups")
-                .whereGreaterThan("", Group.ACCESS_LEVEL_MEMBER)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-
-                    }
-                });
+                .whereGreaterThan("access_level", Group.ACCESS_LEVEL_MEMBER)
+                .addSnapshotListener(this);
     }
 
     @Override
     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-        if (documentSnapshots == null)
-            return;
-
         for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
             switch (change.getType()) {
                 case ADDED: {
@@ -55,6 +47,8 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
                                 public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
                                     Group course = documentSnapshot.toObject(Group.class);
                                     course.setId(documentSnapshot.getId());
+
+                                    // New
                                     for (int i = 0; i < courses.size(); i++)
                                         if (courses.get(i).getId().equals(course.getId())) {
                                             courses.set(i, course);

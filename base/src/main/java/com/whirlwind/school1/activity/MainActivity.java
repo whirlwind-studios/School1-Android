@@ -100,10 +100,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot == null)
-                        return;
-
-                    if (documentSnapshot.get("school") == null)
+                    if (!documentSnapshot.exists() || documentSnapshot.get("school") == null)
                         new SnackbarPopup(R.string.message_no_school, Snackbar.LENGTH_INDEFINITE, false)
                                 .setAction(R.string.message_open_me, new View.OnClickListener() {
                                     @Override

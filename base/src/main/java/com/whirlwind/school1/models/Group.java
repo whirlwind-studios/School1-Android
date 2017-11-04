@@ -1,7 +1,9 @@
 package com.whirlwind.school1.models;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.whirlwind.school1.helper.BackendHelper;
 
+@IgnoreExtraProperties
 public class Group implements BackendHelper.Queryable {
 
     public static final int TYPE_SCHOOL = 0, TYPE_COURSE = 1, TYPE_PROEJECT = 2, TYPE_MASK = 7; // max 8 different types

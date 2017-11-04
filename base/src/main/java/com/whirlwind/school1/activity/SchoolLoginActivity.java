@@ -21,13 +21,16 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.models.PendingSchoolLogin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SchoolLoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -82,7 +85,7 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot != null && documentSnapshot.get("school") != null) {
+                        if (documentSnapshot.exists() && documentSnapshot.get("school") != null) {
                             setResult(1);
                             finish();
                         }
@@ -131,10 +134,13 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                     break;
                 }
 
+            Map<String, Object> objectMap = new HashMap<>();
+            objectMap.put("pendingSchoolLogin", new PendingSchoolLogin(uid, password));
+
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .update("pendingSchoolLogin", new PendingSchoolLogin(uid, password));
+                    .set(objectMap, SetOptions.merge());
         }
     }
 
