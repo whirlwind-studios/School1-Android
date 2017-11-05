@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -32,6 +31,7 @@ import com.whirlwind.school1.fragment.DashboardFragment;
 import com.whirlwind.school1.fragment.IdeasFragment;
 import com.whirlwind.school1.fragment.SettingsFragment;
 import com.whirlwind.school1.fragment.TimetableFragment;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.popup.SnackbarPopup;
 import com.whirlwind.school1.popup.TextPopup;
 
@@ -94,13 +94,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             TextView name = headerView.findViewById(R.id.navigation_header_layout_name);
             name.setText(auth.getCurrentUser().getDisplayName());
 
-            final DocumentReference reference = FirebaseFirestore.getInstance().collection("users")
-                    .document(auth.getCurrentUser().getUid());
-
-            reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            BackendHelper.getUserReference().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (!documentSnapshot.exists() || documentSnapshot.get("school.id") == null)
+                    if (!documentSnapshot.exists() || documentSnapshot.get("school") == null)
                         new SnackbarPopup(R.string.message_no_school, Snackbar.LENGTH_INDEFINITE, false)
                                 .setAction(R.string.message_open_me, new View.OnClickListener() {
                                     @Override
@@ -109,9 +106,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                     }
                                 }).show(MainActivity.this);
                     else {
-                        TextView schoolTextView = headerView.findViewById(R.id.navigation_header_layout_school);
-                        schoolTextView.setText(documentSnapshot.getString("school.name"));
-                        reference.collection("groups").get()
+                        FirebaseFirestore.getInstance()
+                                .collection("groups")
+                                .document(documentSnapshot.getString("school"))
+                                .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        TextView schoolTextView = headerView.findViewById(R.id.navigation_header_layout_school);
+                                        schoolTextView.setText(documentSnapshot.getString("name"));
+                                    }
+                                });
+                        BackendHelper.getUserReference().collection("groups").get()
                                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                     @Override
                                     public void onSuccess(QuerySnapshot documentSnapshots) {
