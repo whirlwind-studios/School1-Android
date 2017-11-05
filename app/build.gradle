@@ -8,8 +8,8 @@ android {
         minSdkVersion 17
         targetSdkVersion 26
         applicationId "com.whirlwind.school1"
-        versionCode 37
-        versionName "2.0.0prev"
+        versionCode 38
+        versionName "2.0.0beta"
     }
     buildTypes {
         release {
