@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 
 import java.util.ArrayList;
@@ -75,9 +74,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
                 Map<String, Object> map = new HashMap<>();
                 map.put("access_level", Group.ACCESS_LEVEL_MEMBER);
 
-                FirebaseFirestore.getInstance()
-                        .collection("users")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                BackendHelper.getUserReference()
                         .collection("groups")
                         .document(course.getId())
                         .set(map);

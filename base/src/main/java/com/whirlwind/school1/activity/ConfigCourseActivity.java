@@ -6,12 +6,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 import com.whirlwind.school1.popup.TextPopup;
 
@@ -41,16 +41,13 @@ public class ConfigCourseActivity extends BaseActivity {
         if (item.getItemId() == android.R.id.home)
             onBackPressed();
         else if (item.getItemId() == R.id.action_done) {
-            final DocumentReference userReference = FirebaseFirestore.getInstance().collection("users")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            userReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            BackendHelper.getUserReference().get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (!documentSnapshot.exists())
                         return;
 
-                    if (documentSnapshot.get("school.id") == null)
+                    if (documentSnapshot.get("school") == null)
                         new TextPopup(R.string.error_title, R.string.message_no_school).show();
                     else {
                         TextView textView = findViewById(R.id.activity_config_course_name);
@@ -59,7 +56,7 @@ public class ConfigCourseActivity extends BaseActivity {
                         Group group = new Group();
                         group.name = name;
                         group.type = Group.TYPE_COURSE;
-                        group.parentGroup = documentSnapshot.getString("school.id");
+                        group.parentGroup = documentSnapshot.getString("school");
 
                         FirebaseFirestore.getInstance()
                                 .collection("groups")
@@ -71,7 +68,7 @@ public class ConfigCourseActivity extends BaseActivity {
                                         Map<String, Object> map = new HashMap<>();
                                         map.put("access_level", Group.ACCESS_LEVEL_CREATOR);
 
-                                        userReference.collection("groups")
+                                        BackendHelper.getUserReference().collection("groups")
                                                 .document(documentReference.getId())
                                                 .set(map)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {

@@ -2,6 +2,7 @@ package com.whirlwind.school1.helper;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BackendHelper {
@@ -18,6 +19,12 @@ public class BackendHelper {
             items = FirebaseFirestore.getInstance()
                     .collection("groups");
         return items.document(groupId).collection("items");
+    }
+
+    public static DocumentReference getUserReference() {
+        return FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
     }
 
     public interface Queryable {

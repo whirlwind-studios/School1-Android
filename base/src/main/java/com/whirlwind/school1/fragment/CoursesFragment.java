@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,6 +28,7 @@ import com.whirlwind.school1.activity.ConfigCourseActivity;
 import com.whirlwind.school1.activity.MainActivity;
 import com.whirlwind.school1.adapter.CourseAdapter;
 import com.whirlwind.school1.adapter.FilterAdapter;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 
 import java.util.ArrayList;
@@ -65,9 +65,7 @@ public class CoursesFragment extends Fragment implements EventListener<QuerySnap
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        BackendHelper.getUserReference()
                 .collection("groups")
                 .addSnapshotListener(new UserGroupListener());
 

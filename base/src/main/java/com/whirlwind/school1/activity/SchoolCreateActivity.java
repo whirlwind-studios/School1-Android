@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.whirlwind.school1.R;
 import com.whirlwind.school1.base.BaseActivity;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 
 import java.util.HashMap;
@@ -85,6 +86,19 @@ public class SchoolCreateActivity extends BaseActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
+                        Map<String, Object> userGroup = new HashMap<>();
+                        userGroup.put("access_level", Group.ACCESS_LEVEL_MEMBER);
+
+                        BackendHelper.getUserReference()
+                                .collection("groups")
+                                .document(documentReference.getId())
+                                .set(userGroup);
+
+                        Map<String, Object> school = new HashMap<>();
+                        school.put("school", documentReference.getId());
+                        BackendHelper.getUserReference()
+                                .set(school);
+
                         finish();
                     }
                 });

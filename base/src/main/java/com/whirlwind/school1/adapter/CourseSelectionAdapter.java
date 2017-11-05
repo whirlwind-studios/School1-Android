@@ -7,13 +7,13 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.whirlwind.school1.helper.BackendHelper;
 import com.whirlwind.school1.models.Group;
 
 import java.util.ArrayList;
@@ -26,9 +26,7 @@ public class CourseSelectionAdapter extends BaseAdapter implements AdapterView.O
     private sharableListener sharableListener;
 
     public CourseSelectionAdapter() {
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        BackendHelper.getUserReference()
                 .collection("groups")
                 .whereGreaterThan("access_level", Group.ACCESS_LEVEL_MEMBER)
                 .addSnapshotListener(this);
