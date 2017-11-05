@@ -2,7 +2,6 @@ package com.whirlwind.school1.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -36,8 +35,7 @@ import java.util.Map;
 public class SchoolLoginActivity extends BaseActivity implements View.OnClickListener {
 
     private AutoCompleteTextView nameAutoCompleteTextView;
-    private TextInputEditText passwordEditText;
-    private TextInputLayout nameLayout, passwordLayout;
+    private TextInputLayout nameLayout;
     private TextView signupTextView;
 
     private List<Group> schools = new ArrayList<>();
@@ -47,12 +45,8 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_school_login);
 
-        // TODO: Failure messages
-
         nameAutoCompleteTextView = findViewById(R.id.activity_school_login_autocomplete_text_view_name);
-        passwordEditText = findViewById(R.id.activity_school_login_edit_text_password);
         nameLayout = findViewById(R.id.activity_school_login_text_input_layout_name);
-        passwordLayout = findViewById(R.id.activity_school_login_text_input_layout_password);
         signupTextView = findViewById(R.id.activity_school_login_signup);
 
         if (getSupportActionBar() != null) {
@@ -91,7 +85,7 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
                     }
                 });
 
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        nameAutoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
@@ -118,49 +112,43 @@ public class SchoolLoginActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         nameLayout.setErrorEnabled(false);
-        passwordLayout.setErrorEnabled(false);
-        final String name = nameAutoCompleteTextView.getText().toString(),
-                password = passwordEditText.getText().toString();
-        if ("".equals(name))
+        String name = nameAutoCompleteTextView.getText().toString();
+
+        if ("".equals(name)) {
             nameLayout.setError(getString(R.string.error_field_required));
-        else if ("".equals(password))
-            passwordLayout.setError(getString(R.string.error_field_required));
-        else {
-            String id = null;
-            for (Group school : schools)
-                if (school.name.equals(name)) {
-                    id = school.getId();
-                    break;
-                }
-            if (id == null) {
-                new TextPopup(R.string.error_title, R.string.error_no_school_with_name).show(SchoolLoginActivity.this);
-                return;
-            }
-
-            Map<String, Object> mergeObject = new HashMap<>();
-            Map<String, Object> school = new HashMap<>();
-            school.put("id", id);
-            school.put("name", name);
-
-            mergeObject.put("school", school);
-
-            DocumentReference user = FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            user.set(mergeObject, SetOptions.merge());
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("access_level", Group.ACCESS_LEVEL_MEMBER);
-
-            user.collection("groups")
-                    .document(id)
-                    .set(map);
-
-            /*FirebaseFirestore.getInstance()
-                    .collection("pendingSchoolLogins")
-                    .add(new PendingSchoolLogin(id, password));*/
+            return;
         }
+
+        String id = null;
+        for (Group school : schools)
+            if (school.name.equals(name)) {
+                id = school.getId();
+                break;
+            }
+        if (id == null) {
+            new TextPopup(R.string.error_title, R.string.error_no_school_with_name).show(SchoolLoginActivity.this);
+            return;
+        }
+
+        Map<String, Object> mergeObject = new HashMap<>();
+        Map<String, Object> school = new HashMap<>();
+        school.put("id", id);
+        school.put("name", name);
+
+        mergeObject.put("school", school);
+
+        DocumentReference user = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        user.set(mergeObject, SetOptions.merge());
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("access_level", Group.ACCESS_LEVEL_MEMBER);
+
+        user.collection("groups")
+                .document(id)
+                .set(map);
     }
 
     @Override

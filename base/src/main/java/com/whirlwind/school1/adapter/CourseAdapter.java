@@ -15,7 +15,9 @@ import com.whirlwind.school1.models.Group;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder> {
 
@@ -70,12 +72,15 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("access_level", Group.ACCESS_LEVEL_MEMBER);
+
                 FirebaseFirestore.getInstance()
                         .collection("users")
                         .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .collection("groups")
                         .document(course.getId())
-                        .set(Group.ACCESS_LEVEL_MEMBER);
+                        .set(map);
             }
         });
     }
